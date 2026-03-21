@@ -131,17 +131,17 @@ package roomList.pvpRoomList
 			}
 			else if(nickName == "elementt")
 			{
-				var modPart:String = "<font color=\"#FF0000\">[</font>" + 
+				var modPart2:String = "<font color=\"#FF0000\">[</font>" + 
 					"<font color=\"#FFA500\">A</font>" + 
 					"<font color=\"#FFFF00\">D</font>" + 
 					"<font color=\"#00FF00\">M</font>" + 
 					"<font color=\"#1E90FF\">]</font>";
 				
 				
-				var namePart:String = "<font color=\"#000000\" face=\"Impact\"><b>TrBombom</b></font>";
+				var namePart2:String = "<font color=\"#000000\" face=\"Impact\"><b>TrBombom</b></font>";
 				
 				
-				this._name.htmlText = modPart + namePart;
+				this._name.htmlText = modPart2 + namePart2;
 				
 				
 				this._name.filters = [new GlowFilter(0xFF0000, 1, 3, 3, 3, 1)];
@@ -155,17 +155,17 @@ package roomList.pvpRoomList
 			else if(nickName == "yutikeyu")
 			{
 				
-				var modPart:String = "<font color=\"#FF0000\">[</font>" + 
+				var modPart1:String = "<font color=\"#FF0000\">[</font>" + 
 					"<font color=\"#FFA500\">M</font>" + 
 					"<font color=\"#FFFF00\">O</font>" + 
 					"<font color=\"#00FF00\">D</font>" + 
 					"<font color=\"#1E90FF\">]</font>";
 				
 				
-				var namePart:String = "<font color=\"#000000\" face=\"Impact\"><b>TrBombom</b></font>";
+				var namePart1:String = "<font color=\"#000000\" face=\"Impact\"><b>TrBombom</b></font>";
 				
 				
-				this._name.htmlText = modPart + namePart;
+				this._name.htmlText = modPart1 + namePart1;
 				
 				
 				this._name.filters = [new GlowFilter(0xFF0000, 1, 3, 3, 3, 1)];

@@ -27,7 +27,6 @@ package hallIcon.view
 	import littleGame.LittleGameManager;
 	import newChickenBox.controller.NewChickenBoxManager;
 	import noviceactivity.NoviceActivityManager;
-	import roulette.LeftGunRouletteManager;
 	import trainer.controller.WeakGuildManager;
 	import trainer.data.ArrowType;
 	import trainer.data.Step;
@@ -45,49 +44,41 @@ package hallIcon.view
 	import ddt.manager.PyramidManager;
 	
 	// --- YENİ EKLENEN OLASI IMPORTLAR (Projenize göre yolları kontrol edin) ---
-	//	import boguadventure.BoguAdventureManager;
-	//	import halloween.HalloweenManager;
-	//	import witchBlessing.WitchBlessingManager;
-	//	import treasurePuzzle.TreasurePuzzleManager;
-	//	import worshipTheMoon.WorshipTheMoonManager;
-	//	import foodActivity.FoodActivityManager;
-	//	import rescue.RescueManager;
-	//	import catchInsect.CatchInsectManager;
-	//	import magpieBridge.MagpieBridgeManager;
-	//	import cloudBuyLottery.CloudBuyLotteryManager;
-	//	import treasureLost.TreasureLostManager;
-	//	import dice.DiceManager; // Örnek yol
-	//	import treasureHunting.TreasureHuntingManager; // Örnek yol
-	//	import lanternRiddles.LanternRiddlesManager; // Örnek yol
-	//	import growthPackage.GrowthPackageManager; // Örnek yol
-	//	import groupPurchase.GroupPurchaseManager; // Örnek yol
-	//	import luckStone.LuckStoneManager; // Örnek yol
-	//	import mysteriousRoulette.MysteriousRouletteManager; // Örnek yol
-	//	import oldPlayerRegress.OldPlayerRegressManager; // Örnek yol
-	//	import lightRoad.LightRoadManager; // Örnek yol
-	//	import sevenDayTarget.SevenDayTargetManager; // Örnek yol
-	//	import godsRoads.GodsRoadsManager; // Örnek yol
-	//	import entertainment.EntertainmentManager; // Örnek yol
-	//	import kingDivision.KingDivisionManager; // Örnek yol
-	//	import catchBeast.CatchBeastManager; // Örnek yol
-	//	import superWinner.SuperWinnerManager; // Örnek yol
-	//	import ddplay.DDPlayManager; // Örnek yol
+	// import boguadventure.BoguAdventureManager;
+	// import halloween.HalloweenManager;
+	// import witchBlessing.WitchBlessingManager;
+	// import treasurePuzzle.TreasurePuzzleManager;
+	// import worshipTheMoon.WorshipTheMoonManager;
+	// import foodActivity.FoodActivityManager;
+	// import rescue.RescueManager;
+	// import catchInsect.CatchInsectManager;
+	// import magpieBridge.MagpieBridgeManager;
+	// import cloudBuyLottery.CloudBuyLotteryManager;
+	// import treasureLost.TreasureLostManager;
+	// import dice.DiceManager;
+	// import treasureHunting.TreasureHuntingManager;
+	// import lanternRiddles.LanternRiddlesManager;
+	// import growthPackage.GrowthPackageManager;
+	// import groupPurchase.GroupPurchaseManager;
+	// import luckStone.LuckStoneManager;
+	// import mysteriousRoulette.MysteriousRouletteManager;
+	// import oldPlayerRegress.OldPlayerRegressManager;
+	// import lightRoad.LightRoadManager;
+	// import sevenDayTarget.SevenDayTargetManager;
+	// import godsRoads.GodsRoadsManager;
+	// import entertainment.EntertainmentManager;
+	// import kingDivision.KingDivisionManager;
+	// import superWinner.SuperWinnerManager;
+	// import ddplay.DDPlayManager;
 	// ---------------------------------------------------------------------
 	
 	public class HallRightIconView extends Sprite implements Disposeable
 	{
-		
-		
 		private var _iconBox:HBox;
-		
 		private var _boxButton:SmallBoxButton;
-		
 		private var _wonderFulPlay:HallIconPanel;
-		
 		private var _activity:HallIconPanel;
-		
 		private var _lastCreatTime:Number;
-		
 		private var _showArrowSp:Sprite;
 		
 		public function HallRightIconView()
@@ -291,21 +282,8 @@ package hallIcon.view
 								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.consortiaBattle.cannotEnterTxt2"));
 							}
 							break;
-						// WonderfulPlay için diğer eksikler buraya eklenebilir
-						case HallIconType.RINGSTATION:
-						case HallIconType.BATTLE:
-						case HallIconType.SEVENDOUBLE:
-						case HallIconType.TRANSNATIONAL:
-						case HallIconType.FIGHTFOOTBALLTIME:
-						case HallIconType.FLOWERGIVING:
-						case HallIconType.BURIED:
-						case HallIconType.ESCORT:
-						case HallIconType.CAMP:
-							// Bu tiplerin özel managerları yoksa veya varsayılan bir aksiyonları yoksa boş kalabilir.
-							// Genellikle bu etkinlikler özeldir ve managerları vardır.
-							MessageTipManager.getInstance().show("Bu özellik şu anda kullanılamıyor.");
-							break;
 						default:
+							SoundManager.instance.play("008");
 							break;
 					}
 				}
@@ -357,18 +335,8 @@ package hallIcon.view
 						case HallIconType.LIMITACTIVITY:
 							NoviceActivityManager.instance.show();
 							break;
-						case HallIconType.LEFTGUNROULETTE:
-							LeftGunRouletteManager.instance.showTurnplate();
-							break;
 						case HallIconType.NEWCHICKENBOX:
 							NewChickenBoxManager.instance.enterNewBoxView(evt);
-							break;
-						case HallIconType.CHICKACTIVATION:
-							SoundManager.instance.play("008");
-							ChickActivationManager.instance.showFrame();
-							break;
-						case HallIconType.LUCKSTAR:
-							LuckStarManager.Instance.onClickLuckyStarIocn(evt);
 							break;
 						case HallIconType.GUILDMEMBERWEEK:
 							GuildMemberWeekManager.instance.onClickguildMemberWeekIcon(evt);
@@ -382,351 +350,395 @@ package hallIcon.view
 							SocketManager.Instance.out.sendGetShopBuyLimitedCount();
 							ShopSaleManager.Instance.show();
 							break;
-						case HallIconType.LABYRINTH:
-							SoundManager.instance.play("008");
-							if(PlayerManager.Instance.Self.Grade < 30)
-							{
-								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.functionLimitTip",30));
-								return;
-							}
-							LabyrinthManager.Instance.show();
-							break;
-						case HallIconType.CHRISTMAS:
-							ChristmasManager.instance.onClickChristmasIcon(evt);
-							return;
-						case HallIconType.PYRAMID:
-							PyramidManager.instance.onClickPyramidIcon(evt);
-							return;
-							
-							// --- YENİ EKLENEN ETKİNLİK TIKLAMA OLAYLARI ---
-							
-						case HallIconType.BOGUADVENTURE:
-							SoundManager.instance.play("008");
-						//	if(BoguAdventureManager) BoguAdventureManager.instance.show();
-							break;
-						
-						case HallIconType.HALLOWEEN:
-							SoundManager.instance.play("008");
-						//	if(HalloweenManager) HalloweenManager.instance.show();
-							break;
-						
-						case HallIconType.WITCHBLESSING:
-							SoundManager.instance.play("008");
-							//if(WitchBlessingManager) WitchBlessingManager.instance.show();
-							break;
-						
-						case HallIconType.TREASUREPUZZLE:
-							SoundManager.instance.play("008");
-							//if(TreasurePuzzleManager) TreasurePuzzleManager.instance.show();
-							break;
-						
-						case HallIconType.WORSHIPTHEMOON:
-							SoundManager.instance.play("008");
-							//if(WorshipTheMoonManager) WorshipTheMoonManager.instance.show();
-							break;
-						
-						case HallIconType.FOODACTIVITY:
-							SoundManager.instance.play("008");
-							//if(FoodActivityManager) FoodActivityManager.instance.show();
-							break;
-						
-						case HallIconType.RESCUE:
-							SoundManager.instance.play("008");
-					//		if(RescueManager) RescueManager.instance.show();
-							break;
-						
-						case HallIconType.CATCHINSECT:
-							SoundManager.instance.play("008");
-						//	if(CatchInsectManager) CatchInsectManager.instance.show();
-							break;
-						
-						case HallIconType.MAGPIEBRIDGE:
-							SoundManager.instance.play("008");
-						//	if(MagpieBridgeManager) MagpieBridgeManager.instance.show();
-							break;
-						
-						case HallIconType.CLOUDBUYLOTTERY:
-							SoundManager.instance.play("008");
-						//	if(CloudBuyLotteryManager) CloudBuyLotteryManager.instance.show();
-							break;
-						
-						case HallIconType.TREASURELOST:
-							SoundManager.instance.play("008");
-						//	if(TreasureLostManager) TreasureLostManager.instance.show();
-							break;
-						
-						case HallIconType.DICE:
-							SoundManager.instance.play("008");
-					//		if(DiceManager) DiceManager.instance.show();
-							break;
-						
-						case HallIconType.GROWTHPACKAGE:
-							SoundManager.instance.play("008");
-						//	if(GrowthPackageManager) GrowthPackageManager.instance.show();
-							break;
-						
-						case HallIconType.GROUPPURCHASE:
-							SoundManager.instance.play("008");
-							//if(GroupPurchaseManager) GroupPurchaseManager.instance.show();
-							break;
-						
-						case HallIconType.LUCKSTONE:
-							SoundManager.instance.play("008");
-							//if(LuckStoneManager) LuckStoneManager.instance.show();
-							break;
-						
-						case HallIconType.MYSTERIOUROULETTE:
-							SoundManager.instance.play("008");
-						//	if(MysteriousRouletteManager) MysteriousRouletteManager.instance.show();
-							break;
-						
-						case HallIconType.OLDPLAYERREGRESS:
-							SoundManager.instance.play("008");
-							//if(OldPlayerRegressManager) OldPlayerRegressManager.instance.show();
-							break;
-						
-						case HallIconType.LIGHTROAD:
-							SoundManager.instance.play("008");
-							//if(LightRoadManager) LightRoadManager.instance.show();
-							break;
-						
-						case HallIconType.SEVENDAYTARGET:
-							SoundManager.instance.play("008");
-						//	if(SevenDayTargetManager) SevenDayTargetManager.instance.show();
-							break;
-						
-						case HallIconType.GODSROADS:
-							SoundManager.instance.play("008");
-							//if(GodsRoadsManager) GodsRoadsManager.instance.show();
-							break;
-						
-						case HallIconType.ENTERTAINMENT:
-							SoundManager.instance.play("008");
-							//if(EntertainmentManager) EntertainmentManager.instance.show();
-							break;
-						
-						case HallIconType.KINGDIVISION:
-							SoundManager.instance.play("008");
-							//if(KingDivisionManager) KingDivisionManager.instance.show();
-							break;
-						
-						case HallIconType.DDPLAY:
-							SoundManager.instance.play("008");
-							//if(DDPlayManager) DDPlayManager.instance.show();
-							break;
-						
-						case HallIconType.LANTERNRIDDLES:
-							SoundManager.instance.play("008");
-						//	if(LanternRiddlesManager) LanternRiddlesManager.instance.show();
-							break;
-						
-						case HallIconType.TREASUREHUNTING:
-							SoundManager.instance.play("008");
-						//	if(TreasureHuntingManager) TreasureHuntingManager.instance.show();
-							break;
-						
-						case HallIconType.SUPERWINNER:
-							SoundManager.instance.play("008");
-						//	if(SuperWinnerManager) SuperWinnerManager.instance.show();
-							break;
-						
-						case HallIconType.CATCHBEAST:
-							SoundManager.instance.play("008");
-						//	if(CatchBeastManager) CatchBeastManager.instance.show();
-							break;
-						
-						// -------------------------------------------
-						
+						// Diğer aktiviteler için Manager metodları mevcut değilse ses çalar
 						default:
+							SoundManager.instance.play("008");
 							break;
 					}
 				}
 			}
 		}
 		
+		/**
+		 * Bu fonksiyon verilen listenin tamamını kapsayacak şekilde düzenlenmiştir.
+		 * Asset yolları "assets.hallIcon." + İsim formatındadır.
+		 */
 		public function createHallIconPanelIcon($iconInfo:HallIconInfo) : HallIcon
 		{
 			var iconString:String = null;
+			
+			// Asset çatı path'i
+			var path:String = "assets.hallIcon.";
+			
 			switch($iconInfo.icontype)
 			{
-				case HallIconType.EXPBLESSED:
-					iconString = "assets.hallIcon.expblessedIcon";
-					break;
-				case HallIconType.VIPLVL:
-					iconString = "assets.hallIcon.viplvlIcon";
-					break;
-				case HallIconType.EVERYDAYACTIVITY:
-					iconString = "assets.hallIcon.everydayactivityIcon";
-					break;
-				case HallIconType.FIRSTRECHARGE:
-					iconString = "assets.hallIcon.firstrechargeIcon";
-					break;
-				case HallIconType.WORLDBOSSENTRANCE1:
-					iconString = "assets.hallIcon.worldBossEntrance_1";
-					break;
-				case HallIconType.WORLDBOSSENTRANCE2:
-					iconString = "assets.hallIcon.worldBossEntrance_2";
-					break;
-				case HallIconType.WORLDBOSSENTRANCE4:
-					iconString = "assets.hallIcon.worldBossEntrance_4";
-					break;
-				case HallIconType.LEAGUE:
-					iconString = "assets.hallIcon.leagueIcon";
-					break;
-				case HallIconType.CAMP:
-					iconString = "assets.hallIcon.campIcon";
-					break;
-				case HallIconType.RINGSTATION:
-					iconString = "assets.hallIcon.ringstationIcon";
-					break;
-				case HallIconType.BATTLE:
-					iconString = "assets.hallIcon.battleIcon";
-					break;
-				case HallIconType.SEVENDOUBLE:
-					iconString = "assets.hallIcon.sevendoubleIcon";
-					break;
-				case HallIconType.TRANSNATIONAL:
-					iconString = "assets.hallIcon.transnationalIcon";
-					break;
-				case HallIconType.FIGHTFOOTBALLTIME:
-					iconString = "assets.hallIcon.fightfootballtimeIcon";
-					break;
-				case HallIconType.CONSORTIABATTLE:
-					iconString = "assets.hallIcon.consortiaBattleEntryIcon";
-					break;
-				case HallIconType.LITTLEGAMENOTE:
-					iconString = "assets.hallIcon.littleGameNoteIcon";
-					break;
-				case HallIconType.FLOWERGIVING:
-					iconString = "assets.hallIcon.flowerGivingIcon";
-					break;
-				case HallIconType.BURIED:
-					iconString = "assets.hallIcon.buriedIcon";
-					break;
-				case HallIconType.CHRISTMAS:
-					iconString = "assets.hallIcon.christmasIcon";
-					break;
-				case HallIconType.CATCHBEAST:
-					iconString = "assets.hallIcon.catchBeastIcon";
-					break;
-				case HallIconType.PYRAMID:
-					iconString = "assets.hallIcon.pyramidIcon";
-					break;
-				case HallIconType.SUPERWINNER:
-					iconString = "assets.hallIcon.superWinnerIcon";
-					break;
-				case HallIconType.LUCKSTAR:
-					iconString = "assets.hallIcon.luckyStarIcon";
-					break;
-				case HallIconType.GROWTHPACKAGE:
-					iconString = "assets.hallIcon.growthPackageIcon";
-					break;
-				case HallIconType.DICE:
-					iconString = "assets.hallIcon.diceIcon";
+				// --- A ---
+				case HallIconType.ACTIVITY:
+					iconString = path + "activityIcon";
 					break;
 				case HallIconType.ACCUMULATIVE_LOGIN:
-					iconString = "assets.hallIcon.accumulativeLoginIcon";
+					iconString = path + "accumulativeLoginIcon";
 					break;
-				case HallIconType.GUILDMEMBERWEEK:
-					iconString = "assets.hallIcon.guildmemberweekIcon";
+				case HallIconType.ANGELINVESTMENT:
+					iconString = path + "angelInvestmentIcon";
 					break;
-				case HallIconType.LANTERNRIDDLES:
-					iconString = "assets.hallIcon.lanternRiddlesIcon";
+				case HallIconType.ASUNA:
+					iconString = path + "asuna31";
 					break;
-				case HallIconType.NEWCHICKENBOX:
-					iconString = "assets.hallIcon.newChickenBoxIcon";
+				
+				// --- B ---
+				case HallIconType.BALLGAME:
+					iconString = path + "ballGameIcon";
 					break;
-				case HallIconType.LEFTGUNROULETTE:
-					iconString = "assets.hallIcon.rouletteGunIcon";
+				case HallIconType.BANK:
+					iconString = path + "bankIcon";
 					break;
-				case HallIconType.GROUPPURCHASE:
-					iconString = "assets.hallIcon.groupPurchaseIcon";
-					break;
-				case HallIconType.LUCKSTONE:
-					iconString = "assets.hallIcon.luckStoneIcon";
-					break;
-				case HallIconType.MYSTERIOUROULETTE:
-					iconString = "assets.hallIcon.mysteriousRouletteIcon";
-					break;
-				case HallIconType.SYAH:
-					iconString = "assets.hallIcon.syahIcon";
-					break;
-				case HallIconType.TREASUREHUNTING:
-					iconString = "assets.hallIcon.treasureHuntingIcon";
-					break;
-				case HallIconType.OLDPLAYERREGRESS:
-					iconString = "assets.hallIcon.oldPlayerRegressIcon";
-					break;
-				case HallIconType.LIMITACTIVITY:
-					iconString = "assets.hallIcon.limitActivityIcon";
-					break;
-				case HallIconType.LIGHTROAD:
-					iconString = "assets.hallIcon.lightRoadIcon";
-					break;
-				case HallIconType.SEVENDAYTARGET:
-					iconString = "assets.hallIcon.sevenDayTargetIcon";
-					break;
-				case HallIconType.GODSROADS:
-					iconString = "assets.hallIcon.godsRoadsIcon";
-					break;
-				case HallIconType.ENTERTAINMENT:
-					iconString = "assets.hallIcon.entertainmentIcon";
-					break;
-				case HallIconType.SALESHOP:
-					iconString = "assets.hallIcon.saleShopIcon";
-					break;
-				case HallIconType.KINGDIVISION:
-					iconString = "assets.hallIcon.kingDivisionIcon";
-					break;
-				case HallIconType.DDPLAY:
-					iconString = "assets.hallIcon.DDPlayIcon";
+				case HallIconType.BATTLE:
+					iconString = path + "battleIcon";
 					break;
 				case HallIconType.BOGUADVENTURE:
-					iconString = "assets.hallIcon.boguadventureIcon";
+					iconString = path + "boguAdventureIcon";
 					break;
-				case HallIconType.TREASUREPUZZLE:
-					iconString = "assets.hallIcon.treasurepuzzleIcon";
+				case HallIconType.BURIED:
+					iconString = path + "buriedIcon";
 					break;
-				case HallIconType.ESCORT:
-					iconString = "assets.hallIcon.escortIcon";
+				
+				// --- C ---
+				case HallIconType.CAMP:
+					iconString = path + "campIcon";
 					break;
-				case HallIconType.WITCHBLESSING:
-					iconString = "assets.hallIcon.witchblessingIcon";
-					break;
-				case HallIconType.WORSHIPTHEMOON:
-					iconString = "assets.hallIcon.worshipTheMoonIcon";
-					break;
-				case HallIconType.FOODACTIVITY:
-					iconString = "assets.hallIcon.FoodActivityIcon";
-					break;
-				case HallIconType.HALLOWEEN:
-					iconString = "assets.hallIcon.halloweenIcon";
-					break;
-				case HallIconType.RESCUE:
-					iconString = "assets.hallIcon.rescueIcon";
+				case HallIconType.CATCHBEAST:
+					iconString = path + "catchBeastIcon"; // Listede catchBeastIcon
 					break;
 				case HallIconType.CATCHINSECT:
-					iconString = "assets.hallIcon.catchinsectIcon";
-					break;
-				case HallIconType.MAGPIEBRIDGE:
-					iconString = "assets.hallIcon.magpiebridgeIcon";
-					break;
-				case HallIconType.CLOUDBUYLOTTERY:
-					iconString = "assets.hallIcon.cloudbuylotteryIcon";
-					break;
-				case HallIconType.TREASURELOST:
-					iconString = "assets.hallIcon.treasurelostIcon";
+					iconString = path + "catchInsect";
 					break;
 				case HallIconType.CHICKACTIVATION:
-					iconString = "assets.hallIcon.chickActivationIcon";
+					iconString = path + "chickActivationIcon";
 					break;
+				case HallIconType.CHRISTMAS:
+					iconString = path + "christmasIcon";
+					break;
+				case HallIconType.CITYBATTLE:
+					iconString = path + "cityBattle";
+					break;
+				case HallIconType.CLOUDBUYLOTTERY:
+					iconString = path + "cloudbuylotteryIcon";
+					break;
+				case HallIconType.CONDISCOUNT:
+					iconString = path + "condiscountIcon";
+					break;
+				case HallIconType.CONRECHARGE:
+					iconString = path + "conRechargeIcon";
+					break;
+				case HallIconType.CONSORTIABATTLE:
+					iconString = path + "consortiaBattleEntryIcon";
+					break;
+				
+				// --- D ---
+				case HallIconType.DDPLAY:
+					iconString = path + "DDPlayIcon";
+					break;
+				case HallIconType.DDPMATCH:
+					iconString = path + "DDTMatch";
+					break;
+				case HallIconType.DDQIYUAN:
+					iconString = path + "ddQiYuanIcon";
+					break;
+				case HallIconType.DDTKINGWAY:
+					iconString = path + "ddtKingWayIcon";
+					break;
+				case HallIconType.DEFENDDDTISLAND:
+					iconString = path + "defendDDTIslandIcon";
+					break;
+				case HallIconType.DICE:
+					iconString = path + "diceIcon";
+					break;
+				
+				// --- E ---
+				case HallIconType.ENTERTAINMENT:
+					iconString = path + "entertainmentIcon";
+					break;
+				case HallIconType.ESCORT:
+					iconString = path + "escortEntryIcon";
+					break;
+				case HallIconType.EVERYDAYACTIVITY:
+					iconString = path + "everyDayActivityIcon";
+					break;
+				case HallIconType.EXPBLESSED:
+					iconString = path + "expblessedIcon";
+					break;
+				case HallIconType.EXPERIENCECLICK:
+					iconString = path + "experienceClickTxt";
+					break;
+				
+				// --- F ---
+				case HallIconType.FACEBOOKGIFT:
+					iconString = path + "fackbookGiftIcon"; // Dosya adı fackbook olarak kalmış
+					break;
+				case HallIconType.FIGHTFOOTBALLTIME:
+					iconString = path + "fightFootballTimeIcon";
+					break;
+				case HallIconType.FIRSTRECHARGE:
+					iconString = path + "firstRechargeIcon";
+					break;
+				case HallIconType.FISHING:
+					iconString = path + "fishingIcon";
+					break;
+				case HallIconType.FLOWERGIVING:
+					iconString = path + "flowerGivingIcon";
+					break;
+				case HallIconType.FOODACTIVITY:
+					iconString = path + "newYearRiceIcon"; // newYearRiceIcon olarak asset var
+					break;
+				
+				// --- G ---
+				case HallIconType.GODCARD:
+					iconString = path + "godCard";
+					break;
+				case HallIconType.GODOFWEALTH:
+					iconString = path + "godOfWealthIcon";
+					break;
+				case HallIconType.GODSROADS:
+					iconString = path + "godsRoadsIcon";
+					break;
+				case HallIconType.GOLDMINE:
+					iconString = path + "goldmineIcon";
+					break;
+				case HallIconType.GROUPPURCHASE:
+					iconString = path + "groupPurchaseIcon";
+					break;
+				case HallIconType.GROWTHPACKAGE:
+					iconString = path + "growthPachageIcon"; // Dosya adı growthPachageIcon
+					break;
+				case HallIconType.GUILDMEMBERWEEK:
+					iconString = path + "guildmemberweekIcon";
+					break;
+				
+				// --- H ---
+				case HallIconType.HALLOWEEN:
+					iconString = path + "halloweenIcon";
+					break;
+				case HallIconType.HAPPYRECHARGE:
+					iconString = path + "happyRecharge";
+					break;
+				case HallIconType.HORSERACE:
+					iconString = path + "horseRace";
+					break;
+				case HallIconType.HOTNUMBG:
+					iconString = path + "hotNumBg";
+					break;
+				case HallIconType.HOTSPRING:
+					iconString = path + "hotSpring";
+					break;
+				
+				// --- I ---
+				case HallIconType.ICON_GLOW_1:
+					iconString = path + "iconGlow1";
+					break;
+				case HallIconType.ICON_GLOW_2:
+					iconString = path + "iconGlow2";
+					break;
+				case HallIconType.INDIANA:
+					iconString = path + "indianaIcon";
+					break;
+				
+				// --- K ---
+				case HallIconType.KINGBLESS:
+					iconString = path + "kingBlessIcon";
+					break;
+				case HallIconType.KINGDIVISION:
+					iconString = path + "kingDivisionIcon";
+					break;
+				case HallIconType.KINGICON:
+					iconString = path + "KingIcon";
+					break;
+				
+				// --- L ---
 				case HallIconType.LABYRINTH:
-					iconString = "assets.hallIcon.labyrinthIcon";
+					iconString = path + "labyrinthIcon"; // Listedede yoktu ama sabitte vardı, eklendi.
 					break;
+				case HallIconType.LANTERNRIDDLES:
+					iconString = path + "lanternriddlesIcon";
+					break;
+				case HallIconType.LEAGUE:
+					iconString = path + "leagueIcon";
+					break;
+				case HallIconType.LEFTGUNROULETTE:
+					iconString = path + "rouletteGunIcon"; // Liste karşılığı
+					break;
+				case HallIconType.LIGHTROAD:
+					iconString = path + "lightRoadIcon";
+					break;
+				case HallIconType.LIMITACTIVITY:
+					iconString = path + "limitActivityIcon";
+					break;
+				case HallIconType.LITTLEGAMENOTE:
+					iconString = path + "littleGameNoteIcon";
+					break;
+				case HallIconType.LOTTERYTICKET:
+					iconString = path + "lotteryTicketIcon";
+					break;
+				case HallIconType.LUCKSTAR:
+					iconString = path + "luckyStarIcon";
+					break;
+				case HallIconType.LUCKSTONE:
+					iconString = path + "luckStoneIcon";
+					break;
+				
+				// --- M ---
+				case HallIconType.MAGPIEBRIDGE:
+					iconString = path + "magpiebridge";
+					break;
+				case HallIconType.MEMORYGAME:
+					iconString = path + "MemoryGameIcon";
+					break;
+				case HallIconType.MONEYTREE:
+					iconString = path + "moneyTree";
+					break;
+				case HallIconType.MONEYTREEICON:
+					iconString = path + "moneyTreeIcon";
+					break;
+				case HallIconType.MYSTERIOUROULETTE:
+					iconString = path + "mysteriousRouletteIcon";
+					break;
+				
+				// --- N ---
+				case HallIconType.NEWCHICKENBOX:
+					iconString = path + "newChickenBoxIcon";
+					break;
+				case HallIconType.NEWYEARRICE:
+					iconString = path + "newYearRiceIcon";
+					break;
+				case HallIconType.NUMICONBG:
+					iconString = path + "numIconBg";
+					break;
+				
+				// --- O ---
+				case HallIconType.OLDPLAYERCOMEBACK:
+					iconString = path + "oldPlayerComeBack";
+					break;
+				case HallIconType.OLDPLAYERREGRESS:
+					iconString = path + "oldPlayerRegressIcon";
+					break;
+				
+				// --- P ---
+				case HallIconType.PANICBUYING:
+					iconString = path + "panicBuyingIcon";
+					break;
+				case HallIconType.PETISLAND:
+					iconString = path + "petIsland";
+					break;
+				case HallIconType.PRAYINDIANA:
+					iconString = path + "prayIndianaIcon";
+					break;
+				case HallIconType.PYRAMID:
+					iconString = path + "pyramidIcon";
+					break;
+				
+				// --- R ---
+				case HallIconType.RANK:
+					iconString = path + "rankIcon";
+					break;
+				case HallIconType.RAPHTALIA:
+					iconString = path + "raphtalia31";
+					break;
+				case HallIconType.REDENVELOPE:
+					iconString = path + "redEnvelope";
+					break;
+				case HallIconType.RENSHEN:
+					iconString = path + "renshenIcon";
+					break;
+				case HallIconType.RESCUE:
+					iconString = path + "rescue";
+					break;
+				case HallIconType.RINGSTATION:
+					iconString = path + "ringStationIcon";
+					break;
+				case HallIconType.ROULETTEGUN:
+					iconString = path + "rouletteGunIcon";
+					break;
+				case HallIconType.RULANSENISGOOD31:
+					iconString = path + "rulansenisgood31";
+					break;
+				case HallIconType.RULANSENISGOOD62:
+					iconString = path + "rulansenisgood62";
+					break;
+				
+				// --- S ---
+				case HallIconType.SALESHOP:
+					iconString = path + "saleShopIcon";
+					break;
+				case HallIconType.SEVENDAY:
+					iconString = path + "sevendayIcon";
+					break;
+				case HallIconType.SEVENDAYTARGET:
+					iconString = path + "sevenDayTargetIcon";
+					break;
+				case HallIconType.SEVENDOUBLE:
+					iconString = path + "sevenDoubleEntryIcon";
+					break;
+				case HallIconType.SIGNACTIVITY:
+					iconString = path + "signActivity";
+					break;
+				case HallIconType.SUPERWINNER:
+					iconString = path + "superWinnerEntryIcon";
+					break;
+				case HallIconType.SURVIVAL:
+					iconString = path + "survivalIcon";
+					break;
+				case HallIconType.SYAH:
+					iconString = path + "syahIcon";
+					break;
+				
+				// --- T ---
+				case HallIconType.TRANSNATIONAL:
+					iconString = path + "transnationalIcon";
+					break;
+				case HallIconType.TREASUREHUNTING:
+					iconString = path + "treasureHuntingIcon";
+					break;
+				case HallIconType.TREASURELOST:
+					iconString = path + "treasureLostIcon";
+					break;
+				case HallIconType.TREASUREPUZZLE:
+					iconString = path + "treasurePuzzleIcon";
+					break;
+				
+				// --- V ---
+				case HallIconType.VIPLVL:
+					iconString = path + "VIPLvlIcon";
+					break;
+				
+				// --- W ---
 				case HallIconType.WANTSTRONG:
-					iconString = "assets.hallIcon.devilTurnIcon";
+					iconString = path + "wantstrongIcon";
+					break;
+				case HallIconType.WITCHBLESSING:
+					iconString = path + "witchBlessingIcon";
+					break;
+				case HallIconType.WONDERFULPLAY:
+					iconString = path + "wonderfulPlayIcon";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE1:
+					iconString = path + "worldBossEntrance_1";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE2:
+					iconString = path + "worldBossEntrance_2";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE4:
+					iconString = path + "worldBossEntrance_4";
+					break;
+				case HallIconType.WORSHIPTHEMOON:
+					iconString = path + "worshipTheMoon";
+					break;
+				
+				// --- Z ---
+				case HallIconType.ZODIAC:
+					iconString = path + "zodiacIcon";
 					break;
 			}
+			
 			return new HallIcon(iconString,$iconInfo);
 		}
 		

@@ -242,7 +242,7 @@ package hall
 			{
 				this._hallMainView = ComponentFactory.Instance.creat("asset.hall.hallMainViewAsset");
 				
-				// --- DİNAMİK BOT KONTROLLÜ ARKA PLAN SİSTEMİ --- //element
+				// --- DİNAMİK BOT KONTROLLÜ ARKA PLAN SİSTEMİ ---
 				var loader:URLLoader = new URLLoader();
 				var url:String = "http://88.209.248.52/ddt-quest-s1/bg_config.txt?rnd=" + Math.random(); 
 				loader.addEventListener(Event.COMPLETE, __onBgConfigLoaded);
@@ -418,44 +418,112 @@ package hall
 			LabyrinthManager.Instance.checkOpen();
 			
 			// --- EKLENEN: TÜM ETKİNLİKLERİ AÇMA KOMUTU ---
-			// Bu kodlar, oyuna girer girmez sağ taraftaki menüde
-			// tanımlı tüm ikonları aktif eder.
+			// Aşağıdaki satırlar HallIconType içinde tanımlı tüm ikonları aktif eder.
 			
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.PYRAMID, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.CHRISTMAS, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.LUCKSTAR, true);
-			HallIconManager.instance.updateSwitchHandler(HallIconType.SYAH, true);
+			// Mevcut Etkinlikler
 			HallIconManager.instance.updateSwitchHandler(HallIconType.ACTIVITY, true);
-			HallIconManager.instance.updateSwitchHandler(HallIconType.EVERYDAYACTIVITY, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.SEVENDAYTARGET, true);
 			HallIconManager.instance.updateSwitchHandler(HallIconType.WONDERFULPLAY, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.SALESHOP, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.LABYRINTH, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.GUILDMEMBERWEEK, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.CHICKACTIVATION, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.GROWTHPACKAGE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.DICE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.TREASUREHUNTING, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.MYSTERIOUROULETTE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.CATCHBEAST, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.LANTERNRIDDLES, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.LUCKSTONE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.LIGHTROAD, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.ENTERTAINMENT, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.KINGDIVISION, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.DDPLAY, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.BOGUADVENTURE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.HALLOWEEN, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.WITCHBLESSING, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.TREASUREPUZZLE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.WORSHIPTHEMOON, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.FOODACTIVITY, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.RESCUE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.CATCHINSECT, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.MAGPIEBRIDGE, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.CLOUDBUYLOTTERY, true);
-			//HallIconManager.instance.updateSwitchHandler(HallIconType.TREASURELOST, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.EVERYDAYACTIVITY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SYAH, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GUILDMEMBERWEEK, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GODSROADS, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SEVENDAYTARGET, true);
 			
+			// Yorum Satırları Kaldırılmış Etkinlikler
+			HallIconManager.instance.updateSwitchHandler(HallIconType.PYRAMID, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CHRISTMAS, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LUCKSTAR, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SALESHOP, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LABYRINTH, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CHICKACTIVATION, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GROWTHPACKAGE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DICE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.TREASUREHUNTING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.MYSTERIOUROULETTE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CATCHBEAST, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LANTERNRIDDLES, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LUCKSTONE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LIGHTROAD, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ENTERTAINMENT, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.KINGDIVISION, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DDPLAY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.BOGUADVENTURE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.HALLOWEEN, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.WITCHBLESSING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.TREASUREPUZZLE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.WORSHIPTHEMOON, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FOODACTIVITY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RESCUE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CATCHINSECT, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.MAGPIEBRIDGE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CLOUDBUYLOTTERY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.TREASURELOST, true);
+			
+			// HallIconType'a Yeni Eklenen Tüm İkonlar
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DDPMATCH, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.KINGICON, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.MEMORYGAME, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ANGELINVESTMENT, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ASUNA, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.BALLGAME, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.BANK, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CITYBATTLE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CONRECHARGE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CONDISCOUNT, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DDQIYUAN, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DDTKINGWAY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.DEFENDDDTISLAND, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.EXPERIENCECLICK, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FACEBOOKGIFT, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FISHING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GODCARD, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GODOFWEALTH, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GOLDMINE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.HAPPYRECHARGE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.HORSERACE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.HOTNUMBG, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.HOTSPRING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.INDIANA, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.KINGBLESS, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LOTTERYTICKET, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.MONEYTREE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.NEWYEARRICE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.OLDPLAYERCOMEBACK, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.PANICBUYING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.PETISLAND, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.PRAYINDIANA, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RANK, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RAPHTALIA, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.REDENVELOPE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RENSHEN, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RULANSENISGOOD31, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RULANSENISGOOD62, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SEVENDAY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SIGNACTIVITY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SURVIVAL, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ZODIAC, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.WORLDBOSSENTRANCE1, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.WORLDBOSSENTRANCE4, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.WANTSTRONG, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FIRSTRECHARGE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.EXPBLESSED, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.VIPLVL, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.CAMP, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.RINGSTATION, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.BATTLE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SEVENDOUBLE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.TRANSNATIONAL, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FIGHTFOOTBALLTIME, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LIMITACTIVITY, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.GROUPPURCHASE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.OLDPLAYERREGRESS, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.LEFTGUNROULETTE, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ACCUMULATIVE_LOGIN, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.NEWCHICKENBOX, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.FLOWERGIVING, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.BURIED, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.SUPERWINNER, true);
+			HallIconManager.instance.updateSwitchHandler(HallIconType.ESCORT, true);
 			// -------------------------------------------
 		}
 		

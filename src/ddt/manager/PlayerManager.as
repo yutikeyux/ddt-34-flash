@@ -198,7 +198,7 @@ package ddt.manager
          var _loc3_:int = 0;
          var _loc4_:int = 0;
          var _loc5_:int = 0;
-         if(EquipType.isWeddingRing(param1) && this.Self.Bag.getItemAt(16) == null)
+         if(EquipType.isWeddingRing(param1) && this.Self.FightBag.getItemAt(16) == null)
          {
             return 16;
          }
@@ -213,7 +213,7 @@ package ddt.manager
             _loc5_ = 0;
             while(_loc5_ < _loc2_.length)
             {
-               if(PlayerManager.Instance.Self.Bag.getItemAt(_loc2_[_loc5_]) == null)
+               if(PlayerManager.Instance.Self.PropBag.getItemAt(_loc2_[_loc5_]) == null)
                {
                   _loc3_ = _loc2_[_loc5_];
                   break;
@@ -1588,6 +1588,7 @@ package ddt.manager
       {
          this._self.beginChanges();
          this._self.Money = param1.pkg.readInt();
+		 this._self.DailyMoneyUsed = param1.pkg.readInt();
          this._self.medal = param1.pkg.readInt();
          this._self.Score = param1.pkg.readInt();
          this._self.Gold = param1.pkg.readInt();

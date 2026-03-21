@@ -6,7 +6,7 @@ package ddt.manager
    public class PathManager
    {
       
-      private static var info:PathInfo;
+      public static var info:PathInfo;
       
       public static var SITE_MAIN:String = "";
       
