@@ -68,7 +68,7 @@ package shop.view
       {
          this._frame = ComponentFactory.Instance.creatComponentByStylename("shop.RechargeViewFrame");
          this._bg = ComponentFactory.Instance.creatBitmap("asset.shop.ShopRechargeGoodsBg");
-         this._chargeBtn = ComponentFactory.Instance.creatComponentByStylename("shop.RechargeViewChargeBtn");
+         this._chargeBtn = ComponentFactory.Instance.creatComponentByStylename("shop.RechargeViewChargeBtn"); //şunu kaldırcaz knk xmlden de burdan da
          this._scrollPanel = ComponentFactory.Instance.creatComponentByStylename("shop.RechargeViewItemList");
          this._itemContainer = ComponentFactory.Instance.creatComponentByStylename("shop.CartItemContainer");
          this._costMoneyTxt = ComponentFactory.Instance.creatComponentByStylename("shop.RechargeViewCostMoney");

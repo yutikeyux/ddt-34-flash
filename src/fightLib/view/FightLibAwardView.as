@@ -156,7 +156,7 @@ package fightLib.view
          addChild(this._geted);
          this._title = ComponentFactory.Instance.creatBitmap("fightLib.Award.Title");
          addChild(this._title);
-         this._TipsText = ComponentFactory.Instance.creatBitmap("fightLib.Award.TipsText");
+         this._TipsText = ComponentFactory.Instance.creatBitmap("fightLib.Award.TipsText"); //fightlib xml üzerinden konumunu x i sola kaydırılcak knk
          addChild(this._TipsText);
       }
       

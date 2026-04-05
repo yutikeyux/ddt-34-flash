@@ -103,7 +103,7 @@ package times
       private function onWeeklyAdded(param1:Event) : void
       {
          var event:Event = param1;
-         if(PlayerManager.Instance.Self.IsFirst > 1)
+         if(PlayerManager.Instance.Self.IsFirst > 1) //bombom zamanlarını ne zaman göstereceğinin koşulu not: yutikeyu
          {
             setTimeout(function():void
             {

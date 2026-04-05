@@ -178,7 +178,7 @@ package game.view
 				  // Ateşleme işlemini başlatmadan çıkış yap.
 				  return;
 			  }
-			  // --- EKLENEN KOD BİTİŞİ ---
+			  // --- EKLENEN KOD BİTİŞİ --- yutikeyu
 			  
 			  if(this._keyDown)
 			  {

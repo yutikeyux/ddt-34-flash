@@ -197,7 +197,7 @@ package activeEvents.view
       {
          var _loc5_:BaseAlerFrame = null;
          SoundManager.instance.play("008");
-         if(this._textInput.text == "" && this._info.HasKey == 1)
+         if(this._textInput.text == "" && this._info.HasKey == 1 || this._info.HasKey == 2)
          {
             _loc5_ = AlertManager.Instance.simpleAlert(LanguageMgr.GetTranslation("AlertDialog.Info"),LanguageMgr.GetTranslation("tank.movement.MovementRightView.pass"),LanguageMgr.GetTranslation("ok"),LanguageMgr.GetTranslation("cancel"),true,false,false,2);
             _loc5_.info.showCancel = false;
@@ -341,11 +341,11 @@ package activeEvents.view
       
       private function updatePassBox() : void
       {
-         if(this._info.HasKey == 1)
+         if(this._info.HasKey == 1 || this._info.HasKey == 2)
          {
             this._list.addChild(this._passBox);
          }
-         if(this._info.HasKey == 1 || this._info.HasKey == 2 || this._info.HasKey == 3 || this._info.HasKey == 6)
+         if(this._info.HasKey == 1 || this._info.HasKey == 3 || this._info.HasKey == 6)
          {
             this._activeGetBtn.visible = true;
             this._activeGetBtn.enable = !this._info.isAttend;

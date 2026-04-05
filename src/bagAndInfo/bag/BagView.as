@@ -114,7 +114,7 @@ package bagAndInfo.bag
 		
 		private static const UseColorShellLevel:int = 10;
 		
-		private static const DAILY_MONEY_LIMIT:int = 16000; // YENİ EKLENE: Günlük Limit Sabiti
+		public static var DAILY_MONEY_LIMIT:int = 16000;
 		
 		
 		private var _index:int = 0;
@@ -1034,14 +1034,18 @@ package bagAndInfo.bag
 				// PlayerInfo sınıfında DailyMoneyUsed değişkeninin tanımlı olduğu varsayılır
 				if(this._info.hasOwnProperty("DailyMoneyUsed"))
 				{
-					dailyUsed = int(this._info.DailyMoneyUsed);
+					dailyUsed = int(this._info["DailyMoneyUsed"]);
 				}
-				// DÜZELTME: this yerine Sınıf adı kullanıldı
-				var remaining:int = BagView.DAILY_MONEY_LIMIT - dailyUsed;
+				var dailyLimit:int = BagView.DAILY_MONEY_LIMIT;
+				if(this._info.hasOwnProperty("DailyMoneyLimit") && int(this._info["DailyMoneyLimit"]) > 0)
+				{
+					dailyLimit = int(this._info["DailyMoneyLimit"]);
+				}
+				var remaining:int = dailyLimit - dailyUsed;
 				if(remaining < 0) remaining = 0;
 				
 				var tip:String = LanguageMgr.GetTranslation("tank.view.bagII.GoldDirections");
-				tip += "\nGünlük Limit: 16000. Kalan: " + this.formatNumber(remaining);
+				tip += "\nGünlük Limit: " + this.formatNumber(dailyLimit) + ". Kalan: " + this.formatNumber(remaining);
 				
 				// DÜZELTME: Eğer limit Gold'da görünüyorsa, burayı _goldButton yapın.
 				// Çünkü projenizde değişken isimleri görsel butonlarla ters eşleşmiş olabilir.

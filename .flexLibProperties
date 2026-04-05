@@ -3,6 +3,7 @@
   <includeClasses>
     <classEntry path="ddt.debug.UIDebugHelper"/>
     <classEntry path="ddtKingWay.DDTKingWayManager"/>
+    <classEntry path="room.view.roomView.MusicFrame"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

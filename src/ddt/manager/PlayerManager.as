@@ -1588,7 +1588,6 @@ package ddt.manager
       {
          this._self.beginChanges();
          this._self.Money = param1.pkg.readInt();
-		 this._self.DailyMoneyUsed = param1.pkg.readInt();
          this._self.medal = param1.pkg.readInt();
          this._self.Score = param1.pkg.readInt();
          this._self.Gold = param1.pkg.readInt();
@@ -1601,6 +1600,7 @@ package ddt.manager
          }
          this._self.hardCurrency = param1.pkg.readInt();
 		 this._self.myHonor = param1.pkg.readInt();
+		 this._self.DailyMoneyUsed = param1.pkg.readInt();
          this._self.commitChanges();
       }
       

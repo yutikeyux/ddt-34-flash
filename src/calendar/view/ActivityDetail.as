@@ -201,7 +201,7 @@ package calendar.view
          this._contentField.text = param1.Content;
          this._contentField.autoSize = "left";
          this._hasKey = param1.HasKey;
-         if(this._hasKey == 1)
+         if(this._hasKey == 1 || this._hasKey == 2)
          {
             this._input.visible = this._inputField.visible = true;
             this._inputField.y = this._contentField.y + this._contentField.height + 20;
@@ -216,7 +216,7 @@ package calendar.view
       override public function get height() : Number
       {
          var _loc1_:int = 0;
-         if(this._hasKey == 1)
+         if(this._hasKey == 1 || this._hasKey == 2)
          {
             _loc1_ = this._inputField.y + this._inputField.height + 10;
          }

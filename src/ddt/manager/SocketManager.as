@@ -763,23 +763,23 @@ package ddt.manager
 	  private function activitySystem(param1:PackageIn) : void
 	  {
 		  var _loc2_:int = param1.readByte();
-		  if(_loc2_ > -1 && _loc2_ <= 6)
+		  if(_loc2_ > -1 && _loc2_ <= 6) // 1-6 arası piramit etkinliği dropları
 		  {
 			  dispatchEvent(new CrazyTankSocketEvent(CrazyTankSocketEvent.PYRAMID_SYSTEM,param1,_loc2_));
 		  }
-		  else if(_loc2_ >= 7 && _loc2_ <= 13)
+		  else if(_loc2_ >= 7 && _loc2_ <= 13) // 7-13 arası haftalık birlik yarışması etkinliği dropları
 		  {
 			  dispatchEvent(new CrazyTankSocketEvent(CrazyTankSocketEvent.GUILDMEMBERWEEK_SYSTEM,param1,_loc2_));
 		  }
-		  else if(_loc2_ >= 15 && _loc2_ <= 31)
+		  else if(_loc2_ >= 15 && _loc2_ <= 31) // 15-31 arası yılbaşı etkinliği dropları
 		  {
 			  dispatchEvent(new CrazyTankSocketEvent(CrazyTankSocketEvent.CHRISTMAS_SYSTEM,param1,_loc2_));
 		  }
-		  else if(_loc2_ >= 37 && _loc2_ <= 45)
+		  else if(_loc2_ >= 37 && _loc2_ <= 45) // 37-45 arası fener bilmecesi dropları
 		  {
 			  dispatchEvent(new CrazyTankSocketEvent(CrazyTankSocketEvent.LANTERNRIDDLES_BEGIN,param1,_loc2_));
 		  }
-		  else if(_loc2_ >= 64 && _loc2_ <= 66)
+		  else if(_loc2_ >= 64 && _loc2_ <= 66) // 64-66 arası not yutikeyu
 		  {
 			  dispatchEvent(new CrazyTankSocketEvent(CrazyTankSocketEvent.LIGHTROAD_SYSTEM,param1,_loc2_));
 		  }
@@ -1019,14 +1019,14 @@ package ddt.manager
       }
       
       private function __onAlertClose(param1:FrameEvent) : void
-      {
+      {//
          SoundManager.instance.play("008");
          param1.currentTarget.removeEventListener(FrameEvent.RESPONSE,this.__onAlertClose);
          if(ExternalInterface.available && PathManager.solveAllowPopupFavorite())
          {
             if(ExternalInterface.available && PathManager.solveAllowPopupFavorite())
             {
-               if(PlayerManager.Instance.Self.IsFirst <= 1)
+               if(PlayerManager.Instance.Self.IsFirst <= 3) // 1 di 3 yaptım çünkü isfirst 2 alıyoz bi deneyeyim ya. not: yutikeyu
                {
                   ExternalInterface.call("setFavorite",PathManager.solveLogin(),StatisticManager.siteName,"3");
                }

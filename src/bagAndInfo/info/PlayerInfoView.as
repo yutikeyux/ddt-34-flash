@@ -930,131 +930,148 @@ package bagAndInfo.info
          }
       }
       
-      private function updatePersonInfo() : void
-      {
-         var _loc1_:int = 0;
-         var _loc2_:int = 0;
-         if(this._info == null)
-         {
-            return;
-         }
-         this._reputeField.text = this._info == null ? "" : this._info.Repute.toString();
-         this._gesteField.text = this._info == null ? "" : this._info.Offer.toString();
-         this._dutyField.text = this._info.DutyName == null || this._info.DutyName == "" ? "" : (this._info.ConsortiaID > 0 ? "< " + this._info.DutyName + " >" : "");
-         this._honorNameTxt.text = this._info.honor == null ? "" : this._info.honor;
-         this._nickNameTxt.text = this._info.NickName == null ? "" : this._info.NickName;
-         if(this._info.IsVIP)
-         {
-            ObjectUtils.disposeObject(this._vipName);
-            this._vipName = VipController.instance.getVipNameTxt(114,this._info.typeVIP);
-            this._vipName.x = this._nickNameTxt.x;
-            this._vipName.y = this._nickNameTxt.y;
-            this._vipName.text = this._nickNameTxt.text;
-            addChild(this._vipName);
-            DisplayUtils.removeDisplay(this._nickNameTxt);
-         }
-         else
-         {
-            addChild(this._nickNameTxt);
-            DisplayUtils.removeDisplay(this._vipName);
-         }
-         this._consortiaTxt.text = this._info.ConsortiaName == null ? "" : (this._info.ConsortiaID > 0 ? this._info.ConsortiaName : "");
-         this._dutyField.x = this._consortiaTxt.x + this._consortiaTxt.width + 6;
-         if(this._info.ConsortiaID > 0 && this._dutyField.x + this._dutyField.width > this._offerSourcePosition.x)
-         {
-            this._offerLabel.x = this._dutyField.x + this._dutyField.width;
-         }
-         else
-         {
-            this._offerLabel.x = this._offerSourcePosition.x + 32;
-         }
-         this._gesteField.x = this._offerLabel.x + this._offerLabel.width + 4;
-         this._offerLabel.visible = this._gesteField.visible = this._info.ID == PlayerManager.Instance.Self.ID;
-         this._levelTxt.text = this._info == null ? "" : this._info.Grade.toString();
-         if(this._info.ZoneID != 0 && this._info.ZoneID != PlayerManager.Instance.Self.ZoneID)
-         {
-            this._attackTxt.htmlText = this.getHtmlTextByString(String(this._info.Attack <= 0 ? "" : this._info.Attack),0);
-            this._defenceTxt.htmlText = this.getHtmlTextByString(String(this._info.Defence <= 0 ? "" : this._info.Defence),0);
-            this._agilityTxt.htmlText = this.getHtmlTextByString(String(this._info.Agility <= 0 ? "" : this._info.Agility),0);
-            this._luckTxt.htmlText = this.getHtmlTextByString(String(this._info.Luck <= 0 ? "" : this._info.Luck),0);
-            this._damageTxt.htmlText = this.getHtmlTextByString(String(Math.round(StaticFormula.getDamage(this._info)) <= 0 ? "" : Math.round(StaticFormula.getDamage(this._info))),1);
-            this._armorTxt.htmlText = this.getHtmlTextByString(String(StaticFormula.getRecovery(this._info) <= 0 ? "" : StaticFormula.getRecovery(this._info)),1);
-            this._HPText.htmlText = this.getHtmlTextByString(String(StaticFormula.getMaxHp(this._info)),1);
-            this._vitality.htmlText = this.getHtmlTextByString(String(StaticFormula.getEnergy(this._info) <= 0 ? "" : StaticFormula.getEnergy(this._info)),1);
-            if(this._info.isSelf)
-            {
-               this._battle.htmlText = this.getHtmlTextByString(String(this._info.FightPower),2);
-            }
-            else if(StateManager.currentStateType == StateType.FIGHTING || StateManager.currentStateType == StateType.TRAINER || StateManager.currentStateType == StateType.FIGHT_LIB_GAMEVIEW)
-            {
-               if(GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID) != null && GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID).team == GameManager.Instance.Current.selfGamePlayer.team)
-               {
-                  this._battle.htmlText = this.getHtmlTextByString(this._info == null ? "" : this._info.FightPower.toString(),2);
-               }
-               else
-               {
-                  this._battle.htmlText = "";
-               }
-            }
-         }
-         else
-         {
-            if(StateManager.currentStateType == StateType.FIGHTING || StateManager.currentStateType == StateType.TRAINER || StateManager.currentStateType == StateType.FIGHT_LIB_GAMEVIEW)
-            {
-               if(RoomManager.Instance.current.selfRoomPlayer.playerInfo.ID == this._info.ID)
-               {
-                  this._battle.htmlText = this.getHtmlTextByString(this._info == null ? "" : this._info.FightPower.toString(),2);
-               }
-               else if(GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID) != null && GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID).team == GameManager.Instance.Current.selfGamePlayer.team)
-               {
-                  this._battle.htmlText = this.getHtmlTextByString(this._info == null ? "" : this._info.FightPower.toString(),2);
-               }
-               else
-               {
-                  this._battle.htmlText = "";
-               }
-            }
-            else
-            {
-               this._battle.htmlText = this.getHtmlTextByString(this._info == null ? "" : this._info.FightPower.toString(),2);
-            }
-            this._attackTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(this._info.Attack < 0 ? 0 : this._info.Attack),0);
-            this._agilityTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(this._info.Agility < 0 ? 0 : this._info.Agility),0);
-            this._defenceTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(this._info.Defence < 0 ? 0 : this._info.Defence),0);
-            this._luckTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(this._info.Luck < 0 ? 0 : this._info.Luck),0);
-            this._damageTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(Math.round(StaticFormula.getDamage(this._info))),1);
-            this._armorTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(StaticFormula.getRecovery(this._info)),1);
-            this._HPText.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(StaticFormula.getMaxHp(this._info)),1);
-            this._vitality.htmlText = this._info == null ? "" : this.getHtmlTextByString(String(StaticFormula.getEnergy(this._info)),1);
-         }
-         if(this._info)
-         {
-            this._progressLevel.setProgress(Experience.getExpPercent(this._info.Grade,this._info.GP) * 100,100);
-            _loc1_ = Experience.expericence[this._info.Grade] - Experience.expericence[this._info.Grade - 1];
-            _loc2_ = this._info.GP - Experience.expericence[this._info.Grade - 1];
-            _loc2_ = _loc2_ > _loc1_ ? int(int(_loc1_)) : int(int(_loc2_));
-            if(StateManager.currentStateType == StateType.FIGHTING && this._info.ZoneID != 0 && this._info.ZoneID != PlayerManager.Instance.Self.ZoneID)
-            {
-               this._progressLevel.tipData = "0/" + _loc1_;
-            }
-            else if(_loc2_ > 0 && this._info.Grade < 50)
-            {
-               this._progressLevel.tipData = _loc2_ + "/" + _loc1_;
-            }
-            else if(this._info.Grade == 50)
-            {
-               this._progressLevel.tipData = "0/1";
-            }
-            else
-            {
-               this._progressLevel.tipData = "0/" + _loc1_;
-            }
-         }
-         if(this._info && this._info.ID == PlayerManager.Instance.Self.ID)
-         {
-            this._definitionGroupChange();
-         }
-      }
+	  private function formatNumber(number:Number) : String
+	  {
+		  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");
+	  }
+	  
+	  private function updatePersonInfo() : void
+	  {
+		  var _loc1_:int = 0;
+		  var _loc2_:int = 0;
+		  if(this._info == null)
+		  {
+			  return;
+		  }
+		  var formattedFightPower:String = this.formatNumber(this._info.FightPower);
+		  var formattedAttack:String = this._info.Attack <= 0 ? "" : this.formatNumber(this._info.Attack);
+		  var formattedDefence:String = this._info.Defence <= 0 ? "" : this.formatNumber(this._info.Defence);
+		  var formattedAgility:String = this._info.Agility <= 0 ? "" : this.formatNumber(this._info.Agility);
+		  var formattedLuck:String = this._info.Luck <= 0 ? "" : this.formatNumber(this._info.Luck);
+		  var damageValue:int = Math.round(StaticFormula.getDamage(this._info));
+		  var formattedDamage:String = damageValue <= 0 ? "" : this.formatNumber(damageValue);
+		  var armorValue:Number = StaticFormula.getRecovery(this._info);
+		  var formattedArmor:String = armorValue <= 0 ? "" : this.formatNumber(armorValue);
+		  var formattedHP:String = this.formatNumber(StaticFormula.getMaxHp(this._info));
+		  var vitalityValue:Number = StaticFormula.getEnergy(this._info);
+		  var formattedVitality:String = vitalityValue <= 0 ? "" : this.formatNumber(vitalityValue);
+		  this._reputeField.text = this._info == null ? "" : this._info.Repute.toString();
+		  this._gesteField.text = this._info == null ? "" : this._info.Offer.toString();
+		  this._dutyField.text = this._info.DutyName == null || this._info.DutyName == "" ? "" : (this._info.ConsortiaID > 0 ? "< " + this._info.DutyName + " >" : "");
+		  this._honorNameTxt.text = this._info.honor == null ? "" : this._info.honor;
+		  this._nickNameTxt.text = this._info.NickName == null ? "" : this._info.NickName;
+		  if(this._info.IsVIP)
+		  {
+			  ObjectUtils.disposeObject(this._vipName);
+			  this._vipName = VipController.instance.getVipNameTxt(114,this._info.typeVIP);
+			  this._vipName.x = this._nickNameTxt.x;
+			  this._vipName.y = this._nickNameTxt.y;
+			  this._vipName.text = this._nickNameTxt.text;
+			  addChild(this._vipName);
+			  DisplayUtils.removeDisplay(this._nickNameTxt);
+		  }
+		  else
+		  {
+			  addChild(this._nickNameTxt);
+			  DisplayUtils.removeDisplay(this._vipName);
+		  }
+		  this._consortiaTxt.text = this._info.ConsortiaName == null ? "" : (this._info.ConsortiaID > 0 ? this._info.ConsortiaName : "");
+		  this._dutyField.x = this._consortiaTxt.x + this._consortiaTxt.width + 6;
+		  if(this._info.ConsortiaID > 0 && this._dutyField.x + this._dutyField.width > this._offerSourcePosition.x)
+		  {
+			  this._offerLabel.x = this._dutyField.x + this._dutyField.width;
+		  }
+		  else
+		  {
+			  this._offerLabel.x = this._offerSourcePosition.x + 32;
+		  }
+		  this._gesteField.x = this._offerLabel.x + this._offerLabel.width + 4;
+		  this._offerLabel.visible = this._gesteField.visible = this._info.ID == PlayerManager.Instance.Self.ID;
+		  this._levelTxt.text = this._info == null ? "" : this._info.Grade.toString();
+		  if(this._info.ZoneID != 0 && this._info.ZoneID != PlayerManager.Instance.Self.ZoneID)
+		  {
+			  this._attackTxt.htmlText = this.getHtmlTextByString(formattedAttack,0);
+			  this._defenceTxt.htmlText = this.getHtmlTextByString(formattedDefence,0);
+			  this._agilityTxt.htmlText = this.getHtmlTextByString(formattedAgility,0);
+			  this._luckTxt.htmlText = this.getHtmlTextByString(formattedLuck,0);
+			  this._damageTxt.htmlText = this.getHtmlTextByString(formattedDamage,1);
+			  this._armorTxt.htmlText = this.getHtmlTextByString(formattedArmor,1);
+			  this._HPText.htmlText = this.getHtmlTextByString(formattedHP,1);
+			  this._vitality.htmlText = this.getHtmlTextByString(formattedVitality,1);
+			  if(this._info.isSelf)
+			  {
+				  this._battle.htmlText = this.getHtmlTextByString(formattedFightPower,2);
+			  }
+			  else if(StateManager.currentStateType == StateType.FIGHTING || StateManager.currentStateType == StateType.TRAINER || StateManager.currentStateType == StateType.FIGHT_LIB_GAMEVIEW)
+			  {
+				  if(GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID) != null && GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID).team == GameManager.Instance.Current.selfGamePlayer.team)
+				  {
+					  this._battle.htmlText = this.getHtmlTextByString(formattedFightPower,2);
+				  }
+				  else
+				  {
+					  this._battle.htmlText = "";
+				  }
+			  }
+		  }
+		  else
+		  {
+			  if(StateManager.currentStateType == StateType.FIGHTING || StateManager.currentStateType == StateType.TRAINER || StateManager.currentStateType == StateType.FIGHT_LIB_GAMEVIEW)
+			  {
+				  if(RoomManager.Instance.current.selfRoomPlayer.playerInfo.ID == this._info.ID)
+				  {
+					  this._battle.htmlText = this.getHtmlTextByString(formattedFightPower,2);
+				  }
+				  else if(GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID) != null && GameManager.Instance.Current.findLivingByPlayerID(this._info.ID,this._info.ZoneID).team == GameManager.Instance.Current.selfGamePlayer.team)
+				  {
+					  this._battle.htmlText = this.getHtmlTextByString(formattedFightPower,2);
+				  }
+				  else
+				  {
+					  this._battle.htmlText = "";
+				  }
+			  }
+			  else
+			  {
+				  this._battle.htmlText = this.getHtmlTextByString(formattedFightPower,2);
+			  }
+			  this._attackTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(this._info.Attack < 0 ? "0" : formattedAttack,0);
+			  this._agilityTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(this._info.Agility < 0 ? "0" : formattedAgility,0);
+			  this._defenceTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(this._info.Defence < 0 ? "0" : formattedDefence,0);
+			  this._luckTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(this._info.Luck < 0 ? "0" : formattedLuck,0);
+			  this._damageTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(formattedDamage,1);
+			  this._armorTxt.htmlText = this._info == null ? "" : this.getHtmlTextByString(formattedArmor,1);
+			  this._HPText.htmlText = this._info == null ? "" : this.getHtmlTextByString(formattedHP,1);
+			  this._vitality.htmlText = this._info == null ? "" : this.getHtmlTextByString(formattedVitality,1);
+		  }
+		  if(Boolean(this._info))
+		  {
+			  this._progressLevel.setProgress(Experience.getExpPercent(this._info.Grade,this._info.GP) * 100,100);
+			  _loc1_ = Experience.expericence[this._info.Grade] - Experience.expericence[this._info.Grade - 1];
+			  _loc2_ = this._info.GP - Experience.expericence[this._info.Grade - 1];
+			  _loc2_ = _loc2_ > _loc1_ ? int(int(_loc1_)) : int(int(_loc2_));
+			  if(StateManager.currentStateType == StateType.FIGHTING && this._info.ZoneID != 0 && this._info.ZoneID != PlayerManager.Instance.Self.ZoneID)
+			  {
+				  this._progressLevel.tipData = "0/" + _loc1_;
+			  }
+			  else if(_loc2_ > 0 && this._info.Grade < 50)
+			  {
+				  this._progressLevel.tipData = _loc2_ + "/" + _loc1_;
+			  }
+			  else if(this._info.Grade == 50)
+			  {
+				  this._progressLevel.tipData = "0/1";
+			  }
+			  else
+			  {
+				  this._progressLevel.tipData = "0/" + _loc1_;
+			  }
+		  }
+		  if(Boolean(this._info) && this._info.ID == PlayerManager.Instance.Self.ID)
+		  {
+			  this._definitionGroupChange();
+		  }
+	  }
       
       private function getHtmlTextByString(param1:String, param2:int) : String
       {
