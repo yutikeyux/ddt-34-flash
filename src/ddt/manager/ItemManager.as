@@ -107,10 +107,15 @@ package ddt.manager
          return this._EquipTemplates[param1];
       }
       
-      public function getTemplateById(param1:int) : ItemTemplateInfo
-      {
-         return this._goodsTemplates[param1];
-      }
+	  public function getTemplateById(param1:int) : ItemTemplateInfo
+	  {
+		  if(this._goodsTemplates == null)
+		  {
+			  trace("HATA: ItemTemplate veritabanı henüz yüklenmedi!");
+			  return null;
+		  }
+		  return this._goodsTemplates[param1];
+	  }
       
       public function get categorys() : Vector.<CateCoryInfo>
       {

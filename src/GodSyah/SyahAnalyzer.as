@@ -69,12 +69,21 @@ package GodSyah
                      _loc6_.level = !!_loc6_.isGold ? int(int(int(_loc2_[_loc5_].@Type - 100))) : int(int(int(_loc2_[_loc5_].@Type)));
                      _loc6_.valid = this._createValid(_loc8_.child("Active")[_loc3_].@StartDate,_loc8_.child("Active")[_loc3_].@EndDate);
                      this._modeArr[_loc3_].push(_loc6_);
-                     _loc7_ = new InventoryItemInfo();
-                     _loc7_.TemplateID = _loc6_.syahID;
-                     _loc7_ = ItemManager.fill(_loc7_);
-                     _loc7_.StrengthenLevel = _loc6_.level;
-                     _loc7_.isGold = _loc6_.isGold;
-                     this._detailsArr[_loc3_].push(_loc7_);
+					 _loc7_ = new InventoryItemInfo();
+					 _loc7_.TemplateID = _loc6_.syahID;
+					 
+					 // EŞYA VERİTABANINDA VAR MI KONTROLÜ (HATA ENGELLEYİCİ)
+					 if(ItemManager.Instance.getTemplateById(_loc7_.TemplateID) != null)
+					 {
+						 _loc7_ = ItemManager.fill(_loc7_);
+						 _loc7_.StrengthenLevel = _loc6_.level;
+						 _loc7_.isGold = _loc6_.isGold;
+						 this._detailsArr[_loc3_].push(_loc7_);
+					 }
+					 else
+					 {
+						 trace("SyahAnalyzer Uyarısı: Veritabanında bulunamayan eşya ID: " + _loc7_.TemplateID);
+					 }
                   }
                   _loc5_++;
                }

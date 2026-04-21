@@ -176,6 +176,10 @@ package ddt.loader
 		
 		private var _rechargeCount:int = 0;
 		
+		// Paralel yükleme sayaçları
+		private var _parallelTotal:int = 0;
+		private var _parallelComplete:int = 0;
+		
 		public function StartupResourceLoader()
 		{
 			super();
@@ -411,15 +415,18 @@ package ddt.loader
 			_loc3_.addEventListener(FrameEvent.RESPONSE,this.__onAlertResponse);
 		}
 		
-		private function __onSetupSourceLoadComplete(param1:Event) : void
+		// Paralel yükleme: her loader tamamlandığında sayacı artır
+		// Hepsi tamamlandığında orijinal __onSetupSourceLoadComplete ile aynı işlemi yap
+		private function __onParallelLoaderComplete(param1:LoaderEvent) : void
 		{
-			var _loc2_:QueueLoader = param1.currentTarget as QueueLoader;
-			_loc2_.removeEventListener(Event.COMPLETE,this.__onSetupSourceLoadComplete);
-			_loc2_.removeEventListener(Event.CHANGE,this.__onSetupSourceLoadChange);
-			_loc2_.dispose();
-			_loc2_ = null;
-			this._queueIsComplete = true;
-			dispatchEvent(new StartupEvent(StartupEvent.CORE_SETUP_COMPLETE));
+			param1.loader.removeEventListener(LoaderEvent.COMPLETE, this.__onParallelLoaderComplete);
+			this._parallelComplete++;
+			this._requestProgress = this._parallelComplete;
+			if(this._parallelComplete >= this._parallelTotal)
+			{
+				this._queueIsComplete = true;
+				dispatchEvent(new StartupEvent(StartupEvent.CORE_SETUP_COMPLETE));
+			}
 		}
 		
 		private function __onUIMoudleComplete(param1:UIModuleEvent) : void
@@ -442,76 +449,103 @@ package ddt.loader
 			if(param1.module == UIModuleTypes.TIMEBOX)
 			{
 				dispatchEvent(new StartupEvent(StartupEvent.CORE_LOAD_COMPLETE));
-				this._loaderQueue = new QueueLoader();
+				
+				// Paralel sayaçları sıfırla
+				this._parallelComplete = 0;
+				this._parallelTotal = 0;
 				this._queueIsComplete = false;
-				this._loaderQueue.addEventListener(Event.CHANGE,this.__onSetupSourceLoadChange);
-				this._loaderQueue.addEventListener(Event.COMPLETE,this.__onSetupSourceLoadComplete);
-				this.addLoader(this.creatActiveInfoLoader());
-				this.addLoader(this.creatItemTempleteLoader());
-				this.addLoader(this.creatGoodCategoryLoader());
-				this.addLoader(this.creatShopTempleteLoader());
-				this.addLoader(this.createCardSetsUpgradeRule());
-				this.addLoader(this.createCardPropIncreaseRule());
-				this.addLoader(this.createCardSetsSortRule());
-				this.addLoader(this.createCardSetsProperties());
-				this.addLoader(ConsortionModelControl.Instance.loadSkillInfoList());
-				this.addLoader(this.creatServerListLoader());
-				this.addLoader(this.creatSelectListLoader());
-				this.addLoader(this.creatQuestTempleteLoader());
-				this.addLoader(this.creatEffortTempleteLoader());
-				this.addLoader(this.creatAllQuestionInfoLoader());
-				this.addLoader(this.creatUserBoxInfoLoader());
-				this.addLoader(this.creatBoxTempInfoLoader());
-				this.addLoader(this.creatDailyInfoLoader());
-				this.addLoader(this.creatMovingNotificationLoader());
-				this.addLoader(this.creatShopSortLoader());
-				this.addLoader(this.creatMapInfoLoader());
-				this.addLoader(this.creatDungeonInfoLoader());
-				this.addLoader(this.creatOpenMapInfoLoader());
-				this.addLoader(this.creatExpericenceAnalyzeLoader());
-				this.addLoader(this.creatWeaponBallAnalyzeLoader());
-				this.addLoader(this.creatBallInfoLoader());
-				this.addLoader(this.creatTexpExpLoader());
-				this.addLoader(this.creatBadgeInfoLoader());
-				this.addLoader(this.creatDailyLeagueAwardLoader());
-				this.addLoader(this.creatDailyLeagueLevelLoader());
-				this.addLoader(this.createWishInfoLader());
-				this.addLoader(this.creatServerConfigLoader());
-				this.addLoader(this.createNoviceAndRechargeLoader());
-				this.addLoader(this.creatPetInfoLoader());
-				this.addLoader(this.creatPetSkillLoader());
-				this.addLoader(this.creatPetConfigLoader());
-				this.addLoader(this.creatPetExpericenceAnalyzeLoader());
-				this.addLoader(this.createLoadPetMoePropertyLoader());
-				this.addLoader(this.createStoreEquipConfigLoader());
-				this.addLoader(this.creatItemStrengthenGoodsInfoLoader());
-				this.addLoader(this.createPetsEvolutionDataLoader());
-				this.addLoader(this.createPetsRisingStarDataLoader());
+				
+				// Tüm loader'ları diziye topla
+				var _loaders:Array = [];
+				_loaders.push(this.creatGoodCategoryLoader());
+				_loaders.push(this.creatActiveInfoLoader());
+				_loaders.push(this.creatItemTempleteLoader());
+				_loaders.push(this.creatShopTempleteLoader());
+				_loaders.push(this.createCardSetsUpgradeRule());
+				_loaders.push(this.createCardPropIncreaseRule());
+				_loaders.push(this.createCardSetsSortRule());
+				_loaders.push(this.createCardSetsProperties());
+				_loaders.push(ConsortionModelControl.Instance.loadSkillInfoList());
+				_loaders.push(this.creatServerListLoader());
+				_loaders.push(this.creatSelectListLoader());
+				_loaders.push(this.creatQuestTempleteLoader());
+				_loaders.push(this.creatEffortTempleteLoader());
+				_loaders.push(this.creatAllQuestionInfoLoader());
+				_loaders.push(this.creatUserBoxInfoLoader());
+				_loaders.push(this.creatBoxTempInfoLoader());
+				_loaders.push(this.creatDailyInfoLoader());
+				_loaders.push(this.creatMovingNotificationLoader());
+				_loaders.push(this.creatShopSortLoader());
+				_loaders.push(this.creatMapInfoLoader());
+				_loaders.push(this.creatDungeonInfoLoader());
+				_loaders.push(this.creatOpenMapInfoLoader());
+				_loaders.push(this.creatExpericenceAnalyzeLoader());
+				_loaders.push(this.creatWeaponBallAnalyzeLoader());
+				_loaders.push(this.creatBallInfoLoader());
+				_loaders.push(this.creatTexpExpLoader());
+				_loaders.push(this.creatBadgeInfoLoader());
+				_loaders.push(this.creatDailyLeagueAwardLoader());
+				_loaders.push(this.creatDailyLeagueLevelLoader());
+				_loaders.push(this.createWishInfoLader());
+				_loaders.push(this.creatServerConfigLoader());
+				_loaders.push(this.createNoviceAndRechargeLoader());
+				_loaders.push(this.creatPetInfoLoader());
+				_loaders.push(this.creatPetSkillLoader());
+				_loaders.push(this.creatPetConfigLoader());
+				_loaders.push(this.creatPetExpericenceAnalyzeLoader());
+				_loaders.push(this.createLoadPetMoePropertyLoader());
+				_loaders.push(this.createStoreEquipConfigLoader());
+				_loaders.push(this.creatItemStrengthenGoodsInfoLoader());
+				_loaders.push(this.createPetsEvolutionDataLoader());
+				_loaders.push(this.createPetsRisingStarDataLoader());
 				if(PathManager.suitEnable)
 				{
-					this.addLoader(this.creatSuitTempleteLoader());
-					this.addLoader(this.creatEquipSuitTempleteLoader());
+					_loaders.push(this.creatSuitTempleteLoader());
+					_loaders.push(this.creatEquipSuitTempleteLoader());
 				}
-				this.addLoader(this.accumulativeLoginLoader());
-				this.addLoader(this.createNewTitleDataLoader());
-				this.addLoader(this.createActivitySystemItemsLoader());
-				this.addLoader(this.createAvatarCollectionUnitDataLoader());
-				this.addLoader(this.createAvatarCollectionItemDataLoader());
-				this.addLoader(this.createTotemTemplateLoader());
-				this.addLoader(this.createHonorUpTemplateLoader());
-				this.addLoader(this.createFineSuitInfoLoader());
-				this.addLoader(this.createEquipGhostLoader());
+				_loaders.push(this.accumulativeLoginLoader());
+				_loaders.push(this.createNewTitleDataLoader());
+				_loaders.push(this.createActivitySystemItemsLoader());
+				_loaders.push(this.createAvatarCollectionUnitDataLoader());
+				_loaders.push(this.createAvatarCollectionItemDataLoader());
+				_loaders.push(this.createTotemTemplateLoader());
+				_loaders.push(this.createHonorUpTemplateLoader());
+				_loaders.push(this.createFineSuitInfoLoader());
+				_loaders.push(this.createEquipGhostLoader());
 				if(PathManager.GodSyahEnable)
 				{
-					this.addLoader(this.creatGodSyahLoader());
+					var _godSyah:BaseLoader = this.creatGodSyahLoader();
+					if(_godSyah != null)
+					{
+						_loaders.push(_godSyah);
+					}
 				}
-				this._loaderQueue.start();
+				
+				// null olmayan loader sayısını belirle
+				var _i:int = 0;
+				var _len:int = _loaders.length;
+				while(_i < _len)
+				{
+					if(_loaders[_i] != null)
+					{
+						this._parallelTotal++;
+					}
+					_i++;
+				}
+				
+				// Tüm loader'ları aynı anda başlat
+				_i = 0;
+				while(_i < _len)
+				{
+					var _loader:BaseLoader = _loaders[_i] as BaseLoader;
+					if(_loader != null)
+					{
+						_loader.addEventListener(LoaderEvent.COMPLETE, this.__onParallelLoaderComplete);
+						LoaderManager.Instance.startLoad(_loader);
+					}
+					_i++;
+				}
 			}
-		}
-		
-		private function addLoader(param1:BaseLoader) : void
-		{
-			this._loaderQueue.addLoader(param1);
 		}
 		
 		private function __onSetupSourceLoadChange(param1:Event) : void

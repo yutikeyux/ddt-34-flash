@@ -12,7 +12,7 @@ package cardSystem
       public static const SETSSORTRULE_INIT_COMPLETE:String = "setsSortRuleInitComplete";
       
       public static const SELECT_CARDS:String = "select_cards";
-       
+       //deneme vendai
       
       public var data:Object;
       
