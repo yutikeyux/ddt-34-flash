@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="257" key="DIALOG_WIDTH"/>
+		<item value="38" key="DIALOG_Y_ORIGIN"/>
+		<item value="381" key="DIALOG_HEIGHT"/>
+		<item value="1181" key="DIALOG_X_ORIGIN"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="true" key="wrap"/>
+		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="false" key="wholeword"/>
+		<item value="this._info.CategoryID == 27 ? 7 " key="selection"/>
+		<list key="findhistory">
+			<item value="this._info.CategoryID == 27 ? 7 "/>
+			<item value="ghostPropertyData.agilit"/>
+			<item value="ghost"/>
+			<item value="_upGradeBtn"/>
+			<item value="this._bulkUpGradeBtn.y = this._upGradeBtn.y + this._upGradeBtn.height + 8;"/>
+			<item value="vip"/>
+			<item value="PotTemplateID"/>
+			<item value="HammerJumpStep"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+</section>

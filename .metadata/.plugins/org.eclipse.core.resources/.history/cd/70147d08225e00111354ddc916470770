@@ -1,0 +1,9 @@
+package wonderfulActivity.newActivity.ExchangeAct
+{
+	public class ExchangeGoodsView
+	{
+		public function ExchangeGoodsView()
+		{
+		}
+	}
+}

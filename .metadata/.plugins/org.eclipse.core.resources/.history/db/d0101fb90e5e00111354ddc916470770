@@ -1,0 +1,9 @@
+package signActivity.view
+{
+	public class SignActivityItem
+	{
+		public function SignActivityItem()
+		{
+		}
+	}
+}

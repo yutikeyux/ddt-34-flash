@@ -1,0 +1,9 @@
+package wonderfulActivity.data
+{
+	public class ActivityCellVo
+	{
+		public function ActivityCellVo()
+		{
+		}
+	}
+}

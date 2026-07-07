@@ -1,0 +1,9 @@
+package wonderfulActivity
+{
+	public class WonderfulGMActAnalyer
+	{
+		public function WonderfulGMActAnalyer()
+		{
+		}
+	}
+}

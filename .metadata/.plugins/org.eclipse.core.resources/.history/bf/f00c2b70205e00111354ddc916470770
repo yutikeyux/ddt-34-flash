@@ -1,0 +1,2288 @@
+package wonderfulActivity
+{
+	import activeEvents.data.ActiveEventsInfo;
+	import calendar.CalendarManager;
+	import com.pickgliss.events.FrameEvent;
+	import com.pickgliss.events.UIModuleEvent;
+	import com.pickgliss.loader.BaseLoader;
+	import com.pickgliss.loader.LoaderEvent;
+	import com.pickgliss.loader.UIModuleLoader;
+	import com.pickgliss.ui.ComponentFactory;
+	import com.pickgliss.ui.LayerManager;
+	import com.pickgliss.ui.image.MovieImage;
+	import com.pickgliss.utils.ObjectUtils;
+	import ddt.data.UIModuleTypes;
+	import ddt.data.goods.InventoryItemInfo;
+	import ddt.events.CrazyTankSocketEvent;
+	import ddt.loader.StartupResourceLoader;
+	import ddt.manager.LanguageMgr;
+	import ddt.manager.MessageTipManager;
+	import ddt.manager.PlayerManager;
+	import ddt.manager.SocketManager;
+	import ddt.manager.SoundManager;
+	import ddt.manager.TimeManager;
+	import ddt.utils.FilterWordManager;
+	import ddt.view.UIModuleSmallLoading;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.utils.Dictionary;
+	import flash.utils.Timer;
+	import flash.utils.setTimeout;
+	import road7th.comm.PackageIn;
+	import shop.view.ShopPresentClearingFrame;
+	import signActivity.SignActivityMgr;
+	import wonderfulActivity.data.ActivityTypeData;
+	import wonderfulActivity.data.CanGetData;
+	import wonderfulActivity.data.GiftBagInfo;
+	import wonderfulActivity.data.GiftCurInfo;
+	import wonderfulActivity.data.GmActivityInfo;
+	import wonderfulActivity.data.LeftViewInfoVo;
+	import wonderfulActivity.data.PlayerCurInfo;
+	import wonderfulActivity.data.WonderfulActivityTypeData;
+	import wonderfulActivity.event.WonderfulActivityEvent;
+	import wonderfulActivity.items.JoinIsPowerView;
+	import wonderfulActivity.limitActivity.LimitActivityFrame;
+	import wonderfulActivity.limitActivity.SendGiftActivityFrame;
+	import wonderfulActivity.newActivity.returnActivity.ReturnActivityView;
+	
+	public class WonderfulActivityManager extends EventDispatcher
+	{
+		
+		private static var _instance:WonderfulActivityManager;
+		
+		public static var flag:Boolean;
+		
+		public static const UPDATE_MOUNT_MASTER:String = "updateMountMaster";
+		
+		public static var isFirstClick:Boolean = true;
+		
+		private var _currentItem:IShineableCell;
+		
+		public var activityData:Dictionary;
+		
+		public var activityInitData:Dictionary;
+		
+		public var leftViewInfoDic:Dictionary;
+		
+		public var currentView:*;
+		
+		private var _frame:LimitActivityFrame;
+		
+		private var _sendGiftFrame:SendGiftActivityFrame;
+		
+		private var _info:GmActivityInfo;
+		
+		private var _actList:Array;
+		
+		public var activityTypeList:Vector.<ActivityTypeData>;
+		
+		public var activityFighterList:Vector.<ActivityTypeData>;
+		
+		public var activityExpList:Vector.<ActivityTypeData>;
+		
+		public var activityRechargeList:Vector.<ActivityTypeData>;
+		
+		public var chickenEndTime:Date;
+		
+		public var rouleEndTime:Date;
+		
+		private var _timerHanderFun:Dictionary;
+		
+		private var _wonderfulIcon:MovieImage;
+		
+		private var _timer:Timer;
+		
+		public var xiaoFeiScore:int;
+		
+		public var chongZhiScore:int;
+		
+		public var _stateList:Vector.<CanGetData>;
+		
+		public var deleWAIcon:Function;
+		
+		public var addWAIcon:Function;
+		
+		public var hasActivity:Boolean = false;
+		
+		public var isRuning:Boolean = true;
+		
+		public var currView:String;
+		
+		public var frameCanClose:Boolean = true;
+		
+		public var clickWonderfulActView:Boolean;
+		
+		public var stateDic:Dictionary;
+		
+		public var exchangeActLeftViewInfoDic:Dictionary;
+		
+		private var _mutilIdMapping:Dictionary;
+		
+		private var _existentId:String;
+		
+		public var isSkipFromHall:Boolean;
+		
+		public var skipType:String;
+		
+		public var leftUnitViewType:int;
+		
+		public var isExchangeAct:Boolean = false;
+		
+		private var lastActList:Array = [];
+		
+		private var sendGiftIsOut:Boolean = false;
+		
+		private var firstShowSendGiftFrame:Boolean = true;
+		
+		private var _giveFriendOpenFrame:ShopPresentClearingFrame;
+		
+		private var _battleCompanionInfo:InventoryItemInfo;
+		
+		private var _eventsActiveDic:Dictionary;
+		
+		public var selectId:String = "";
+		
+		public function WonderfulActivityManager()
+		{
+			super();
+			this._actList = [];
+			this._timerHanderFun = new Dictionary();
+			this._stateList = new Vector.<CanGetData>();
+			this.activityInitData = new Dictionary();
+			this.leftViewInfoDic = new Dictionary();
+			this.exchangeActLeftViewInfoDic = new Dictionary();
+			this.activityFighterList = new Vector.<ActivityTypeData>();
+			this.activityExpList = new Vector.<ActivityTypeData>();
+			this.activityRechargeList = new Vector.<ActivityTypeData>();
+			this._mutilIdMapping = new Dictionary();
+			this.stateDic = new Dictionary();
+		}
+		
+		public static function get Instance() : WonderfulActivityManager
+		{
+			if(!_instance)
+			{
+				_instance = new WonderfulActivityManager();
+			}
+			return _instance;
+		}
+		
+		public function currentItem(_arg_1:IShineableCell) : void
+		{
+			this._currentItem = _arg_1;
+		}
+		
+		public function setup() : void
+		{
+			this.initAdvIdName();
+			this.addEvents();
+		}
+		
+		private function initAdvIdName() : void
+		{
+			this.leftViewInfoDic[ActivityType.CHONGZHIHUIKUI] = new LeftViewInfoVo(ActivityType.CHONGZHIHUIKUI,LanguageMgr.GetTranslation("wonderfulActivityManager.btnTxt1"));
+			this.leftViewInfoDic[ActivityType.XIAOFEIHUIKUI] = new LeftViewInfoVo(ActivityType.XIAOFEIHUIKUI,LanguageMgr.GetTranslation("wonderfulActivityManager.btnTxt2"));
+			this.leftViewInfoDic[ActivityType.ZHANYOUCHONGZHIHUIKUI] = new LeftViewInfoVo(ActivityType.ZHANYOUCHONGZHIHUIKUI,LanguageMgr.GetTranslation("wonderfulActivityManager.btnTxt6"));
+			this.exchangeActLeftViewInfoDic[ActivityType.NORMAL_EXCHANGE] = new LeftViewInfoVo(ActivityType.NORMAL_EXCHANGE,LanguageMgr.GetTranslation("wonderfulActivityManager.btnTxt16"));
+		}
+		
+		private function addEvents() : void
+		{
+			SocketManager.Instance.addEventListener(CrazyTankSocketEvent.WONDERFUL_ACTIVITY,this.rechargeReturnHander);
+			SocketManager.Instance.addEventListener(CrazyTankSocketEvent.WONDERFUL_ACTIVITY_INIT,this.activityInitHandler);
+		}
+		
+		private function activityInitHandler(param1:CrazyTankSocketEvent) : void
+		{
+			var type:int = 0;
+			var mainPkg:PackageIn = param1.pkg;
+			type = mainPkg.readInt();
+			if(type == 0)
+			{
+				this.updateNewActivityXml();
+				SocketManager.Instance.out.requestWonderfulActInit(2);
+				SocketManager.Instance.out.requestWonderfulActInit(3);
+			}
+			else if(type == 1)
+			{
+				this.activityInit(mainPkg);
+				this.checkActivity();
+				this.initFrame(this.isSkipFromHall,this.skipType);
+				SocketManager.Instance.out.sendWonderfulActivity(0,-1);
+			}
+			else if(type == 2)
+			{
+				this.activityInit(mainPkg);
+				this.checkActivity(type);
+				dispatchEvent(new WonderfulActivityEvent("refresh"));
+			}
+			else if(type == 3)
+			{
+				this.refreshSingleActivity(mainPkg);
+				dispatchEvent(new WonderfulActivityEvent("refresh"));
+			}
+		}
+		
+		private function refreshSingleActivity(param1:PackageIn) : void
+		{
+			var m_PlayerInfo:PlayerCurInfo = null;
+			var m_RewardsInfo:GiftCurInfo = null;
+			var m_GiftBagID:String = null;
+			var ActiveCount:int = param1.readInt();
+			if(ActiveCount == 0)
+			{
+				return;
+			}
+			var m_ActiveID:String = param1.readUTF();
+			var conditionCount:int = param1.readInt();
+			var m_statusArr:Array = [];
+			var conditionIndex:int = 0;
+			while(conditionIndex <= conditionCount - 1)
+			{
+				m_PlayerInfo = new PlayerCurInfo();
+				m_PlayerInfo.statusID = param1.readInt();
+				m_PlayerInfo.statusValue = param1.readInt();
+				m_statusArr.push(m_PlayerInfo);
+				conditionIndex++;
+			}
+			var rewardsCount:int = param1.readInt();
+			var m_giftInfoDic:Dictionary = new Dictionary();
+			var rewardIndex:int = 0;
+			while(rewardIndex <= rewardsCount - 1)
+			{
+				m_RewardsInfo = new GiftCurInfo();
+				m_GiftBagID = param1.readUTF();
+				m_RewardsInfo.times = param1.readInt();
+				m_RewardsInfo.allGiftGetTimes = param1.readInt();
+				m_giftInfoDic[m_GiftBagID] = m_RewardsInfo;
+				rewardIndex++;
+			}
+			this.activityInitData[m_ActiveID] = {
+				"statusArr":m_statusArr,
+				"giftInfoDic":m_giftInfoDic
+			};
+			if(!this.leftViewInfoDic[m_ActiveID] && !this.exchangeActLeftViewInfoDic[m_ActiveID])
+			{
+				m_ActiveID = String(this._mutilIdMapping[m_ActiveID]);
+			}
+			if(this.currentView is JoinIsPowerView || this.currentView is ReturnActivityView)
+			{
+				this.currentView.refresh();
+			}
+			if(this.currentView && Boolean(this.currentView.hasOwnProperty("updateAwardState")))
+			{
+				this.currentView.updateAwardState();
+			}
+		}
+		
+		private function updateNewActivityXml() : void
+		{
+			var _loc1_:BaseLoader = StartupResourceLoader.Instance.loadWonderfulActivityXml();
+		}
+		
+		private function activityInit(param1:PackageIn) : void
+		{
+			var _loc2_:String = null;
+			var _loc3_:int = 0;
+			var _loc4_:Array = null;
+			var _loc5_:int = 0;
+			var _loc6_:int = 0;
+			var _loc7_:Dictionary = null;
+			var _loc8_:int = 0;
+			var _loc9_:PlayerCurInfo = null;
+			var _loc10_:GiftCurInfo = null;
+			var _loc11_:String = null;
+			var _loc12_:int = param1.readInt();
+			var _loc13_:int = 0;
+			while(_loc13_ <= _loc12_ - 1)
+			{
+				_loc2_ = param1.readUTF();
+				_loc3_ = param1.readInt();
+				_loc4_ = [];
+				_loc5_ = 0;
+				while(_loc5_ <= _loc3_ - 1)
+				{
+					_loc9_ = new PlayerCurInfo();
+					_loc9_.statusID = param1.readInt();
+					_loc9_.statusValue = param1.readInt();
+					_loc4_.push(_loc9_);
+					_loc5_++;
+				}
+				_loc6_ = param1.readInt();
+				_loc7_ = new Dictionary();
+				_loc8_ = 0;
+				while(_loc8_ <= _loc6_ - 1)
+				{
+					_loc10_ = new GiftCurInfo();
+					_loc11_ = param1.readUTF();
+					_loc10_.times = param1.readInt();
+					_loc10_.allGiftGetTimes = param1.readInt();
+					_loc7_[_loc11_] = _loc10_;
+					_loc8_++;
+				}
+				this.activityInitData[_loc2_] = {
+					"statusArr":_loc4_,
+					"giftInfoDic":_loc7_
+				};
+				_loc13_++;
+			}
+			if(this.currentView is JoinIsPowerView || this.currentView is ReturnActivityView)
+			{
+				this.currentView.refresh();
+			}
+		}
+		
+		private function rechargeReturnHander(param1:CrazyTankSocketEvent) : void
+		{
+			var _loc2_:int = 0;
+			var _loc3_:int = 0;
+			var _loc4_:Date = null;
+			var _loc5_:Date = null;
+			var _loc6_:CanGetData = null;
+			var _loc7_:int = 0;
+			var _loc8_:int = 0;
+			var _loc9_:Date = null;
+			var _loc10_:int = 0;
+			var _loc11_:int = 0;
+			var _loc12_:int = param1.pkg.readByte();
+			if(_loc12_ != 2)
+			{
+				if(_loc12_ == 0)
+				{
+					_loc3_ = param1.pkg.readInt();
+					_loc7_ = 0;
+					while(_loc7_ < _loc3_)
+					{
+						_loc8_ = -1;
+						_loc6_ = new CanGetData();
+						_loc6_.id = param1.pkg.readInt();
+						switch(_loc6_.id)
+						{
+							case ActivityType.ZHANYOUCHONGZHIHUIKUI:
+								_loc8_ = ActivityType.ZHANYOUCHONGZHIHUIKUI;
+								_loc10_ = param1.pkg.readInt();
+								break;
+							case ActivityType.CHONGZHIHUIKUI:
+								_loc8_ = ActivityType.CHONGZHIHUIKUI;
+								this.chongZhiScore = param1.pkg.readInt();
+								break;
+							case ActivityType.XIAOFEIHUIKUI:
+								_loc8_ = ActivityType.XIAOFEIHUIKUI;
+								this.xiaoFeiScore = param1.pkg.readInt();
+								break;
+							default:
+								_loc11_ = param1.pkg.readInt();
+						}
+						_loc6_.num = param1.pkg.readInt();
+						_loc4_ = param1.pkg.readDate();
+						_loc5_ = param1.pkg.readDate();
+						this.setActivityTime(_loc6_.id,_loc4_,_loc5_);
+						this.updateStateList(_loc6_);
+						if(_loc8_ != -1)
+						{
+							_loc9_ = TimeManager.Instance.Now();
+							if(_loc9_.getTime() > _loc4_.getTime() && _loc9_.getTime() < _loc5_.getTime() && _loc6_.num != -2)
+							{
+								this.addElement(_loc8_);
+							}
+							else
+							{
+								this.removeElement(_loc8_);
+							}
+						}
+						_loc7_++;
+					}
+					if(_loc3_ == 1 && this._frame && Boolean(this._frame.parent))
+					{
+						if(Boolean(_loc6_))
+						{
+							this._frame.setState(_loc6_.num,_loc6_.id);
+						}
+					}
+				}
+			}
+		}
+		
+		public function updateChargeActiveTemplateXml() : void
+		{
+			var _loc1_:BaseLoader = StartupResourceLoader.Instance.creatWondActiveLoader();
+		}
+		
+		private function dispatchCheckEvent() : void
+		{
+			if(!this._frame && !this.clickWonderfulActView)
+			{
+				dispatchEvent(new WonderfulActivityEvent(WonderfulActivityEvent.CHECK_ACTIVITY_STATE));
+			}
+		}
+		
+		private function updateStateList(param1:CanGetData) : void
+		{
+			var _loc2_:int = int(this._stateList.length);
+			var _loc3_:int = 0;
+			while(_loc3_ < _loc2_)
+			{
+				if(param1.id == this._stateList[_loc3_].id)
+				{
+					this._stateList[_loc3_] = param1;
+					return;
+				}
+				_loc3_++;
+			}
+			this._stateList.push(param1);
+		}
+		
+		private function timerHander(param1:TimerEvent) : void
+		{
+			var _loc2_:Function = null;
+			for each(_loc2_ in this._timerHanderFun)
+			{
+				_loc2_();
+			}
+		}
+		
+		public function addTimerFun(param1:String, param2:Function) : void
+		{
+			this._timerHanderFun[param1] = param2;
+			if(!this._timer)
+			{
+				this._timer = new Timer(1000);
+				this._timer.start();
+				this._timer.addEventListener(TimerEvent.TIMER,this.timerHander);
+			}
+		}
+		
+		public function delTimerFun(param1:String) : void
+		{
+			if(Boolean(this._timerHanderFun[param1]))
+			{
+				delete this._timerHanderFun[param1];
+			}
+			if(this.isEmptyDictionary(this._timerHanderFun))
+			{
+				if(Boolean(this._timer))
+				{
+					this._timer.stop();
+					this._timer.removeEventListener(TimerEvent.TIMER,this.timerHander);
+					this._timer = null;
+				}
+			}
+		}
+		
+		private function isEmptyDictionary(param1:Dictionary) : Boolean
+		{
+			var _loc2_:* = null;
+			for(_loc2_ in param1)
+			{
+				if(_loc2_)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		public function getTimeDiff(param1:Date, param2:Date) : String
+		{
+			var _loc3_:uint = 0;
+			var _loc4_:uint = 0;
+			var _loc5_:uint = 0;
+			var _loc6_:uint = 0;
+			var _loc7_:Number = Math.round((param1.getTime() - param2.getTime()) / 1000);
+			if(_loc7_ >= 0)
+			{
+				_loc3_ = Math.floor(_loc7_ / 60 / 60 / 24);
+				_loc7_ %= 60 * 60 * 24;
+				_loc4_ = Math.floor(_loc7_ / 60 / 60);
+				_loc7_ %= 60 * 60;
+				_loc5_ = Math.floor(_loc7_ / 60);
+				_loc6_ = _loc7_ % 60;
+				if(_loc3_ > 0)
+				{
+					return _loc3_ + LanguageMgr.GetTranslation("wonderfulActivityManager.d");
+				}
+				if(_loc4_ > 0)
+				{
+					return this.fixZero(_loc4_) + LanguageMgr.GetTranslation("wonderfulActivityManager.h");
+				}
+				if(_loc5_ > 0)
+				{
+					return this.fixZero(_loc5_) + LanguageMgr.GetTranslation("wonderfulActivityManager.m");
+				}
+				if(_loc6_ > 0)
+				{
+					return this.fixZero(_loc6_) + LanguageMgr.GetTranslation("wonderfulActivityManager.s");
+				}
+			}
+			return "0";
+		}
+		
+		private function fixZero(param1:uint) : String
+		{
+			return param1 < 10 ? String(param1) : String(param1);
+		}
+		
+		private function setActivityTime(param1:int, param2:Date, param3:Date) : void
+		{
+			var _loc4_:int = 0;
+			var _loc5_:int = 0;
+			if(param1 == ActivityType.ZHANYOUCHONGZHIHUIKUI)
+			{
+				if(this.activityFighterList.length == 0)
+				{
+					return;
+				}
+				this.activityFighterList[0].StartTime = param2;
+				this.activityFighterList[0].EndTime = param3;
+			}
+			else if(param1 >= ActivityType.CHONGZHIHUIKUI && param1 < ActivityType.XIAOFEIHUIKUI)
+			{
+				if(this.activityRechargeList.length == 0)
+				{
+					return;
+				}
+				_loc4_ = 0;
+				while(_loc4_ < this.activityRechargeList.length)
+				{
+					if(param1 == this.activityRechargeList[_loc4_].ID)
+					{
+						this.activityRechargeList[_loc4_].StartTime = param2;
+						this.activityRechargeList[_loc4_].EndTime = param3;
+						break;
+					}
+					_loc4_++;
+				}
+			}
+			else if(param1 >= ActivityType.XIAOFEIHUIKUI)
+			{
+				if(this.activityExpList.length == 0)
+				{
+					return;
+				}
+				_loc5_ = 0;
+				while(_loc5_ < this.activityExpList.length)
+				{
+					if(param1 == this.activityExpList[_loc4_].ID)
+					{
+						this.activityExpList[_loc4_].StartTime = param2;
+						this.activityExpList[_loc4_].EndTime = param3;
+						break;
+					}
+					_loc5_++;
+				}
+			}
+		}
+		
+		public function wonderfulGMActiveInfo(param1:WonderfulGMActAnalyer) : void
+		{
+			var key:Object = null;
+			this.activityData = param1.ActivityData;
+			var count:int = 0;
+			for(key in this.activityData)
+			{
+				count++;
+			}
+			trace("yüklene yüklene " + count + " tane etk yüklenmiş.");
+			SocketManager.Instance.out.requestWonderfulActInit(2);
+		}
+		
+		public function wonderfulActiveType(param1:WonderfulActAnalyer) : void
+		{
+			var _loc2_:int = 0;
+			this.activityFighterList = new Vector.<ActivityTypeData>();
+			this.activityExpList = new Vector.<ActivityTypeData>();
+			this.activityRechargeList = new Vector.<ActivityTypeData>();
+			this.activityTypeList = param1.itemList;
+			var _loc3_:int = int(this.activityTypeList.length);
+			_loc2_ = 0;
+			while(_loc2_ < _loc3_)
+			{
+				this.activityTypeList[_loc2_].StartTime = new Date();
+				this.activityTypeList[_loc2_].EndTime = new Date();
+				if(this.activityTypeList[_loc2_].ID == 2001)
+				{
+					this.activityFighterList.push(this.activityTypeList[_loc2_]);
+				}
+				else if(this.activityTypeList[_loc2_].ID >= 3001 && this.activityTypeList[_loc2_].ID < 4001)
+				{
+					this.activityRechargeList.push(this.activityTypeList[_loc2_]);
+				}
+				else
+				{
+					this.activityExpList.push(this.activityTypeList[_loc2_]);
+				}
+				_loc2_++;
+			}
+			SocketManager.Instance.out.sendWonderfulActivity(0,-1);
+		}
+		
+		public function initFrame(param1:Boolean = false, param2:String = "0") : void
+		{
+			this.isSkipFromHall = param1;
+			this.skipType = param2;
+			this.leftUnitViewType = Boolean(this.leftViewInfoDic[this.skipType]) ? int(this.leftViewInfoDic[this.skipType].unitIndex) : int(2);
+			if(!this._frame)
+			{
+				UIModuleSmallLoading.Instance.progress = 0;
+				UIModuleSmallLoading.Instance.show();
+				UIModuleSmallLoading.Instance.addEventListener(Event.CLOSE,this.onSmallLoadingClose);
+				UIModuleLoader.Instance.addEventListener(UIModuleEvent.UI_MODULE_COMPLETE,this.createActivityFrame);
+				UIModuleLoader.Instance.addEventListener(UIModuleEvent.UI_MODULE_PROGRESS,this.onUIProgress);
+				UIModuleLoader.Instance.addUIModlue(UIModuleTypes.WONDERFULACTIVI);
+			}
+			else
+			{
+				this._frame = ComponentFactory.Instance.creatComponentByStylename("com.wonderfulActivity.LimitActivityFrame");
+				LayerManager.Instance.addToLayer(this._frame,LayerManager.GAME_TOP_LAYER,true,LayerManager.BLCAK_BLOCKGOUND);
+				this._frame.addElement(this.actList);
+			}
+		}
+		
+		protected function onSmallLoadingClose(param1:Event) : void
+		{
+			UIModuleSmallLoading.Instance.hide();
+			UIModuleSmallLoading.Instance.removeEventListener(Event.CLOSE,this.onSmallLoadingClose);
+			UIModuleLoader.Instance.removeEventListener(UIModuleEvent.UI_MODULE_COMPLETE,this.createActivityFrame);
+			UIModuleLoader.Instance.removeEventListener(UIModuleEvent.UI_MODULE_PROGRESS,this.onUIProgress);
+		}
+		
+		private function addLimitActivityFrame() : void
+		{
+			this._frame = ComponentFactory.Instance.creatComponentByStylename("com.wonderfulActivity.LimitActivityFrame");
+			LayerManager.Instance.addToLayer(this._frame,LayerManager.GAME_TOP_LAYER,true,LayerManager.BLCAK_BLOCKGOUND);
+			this._frame.addElement(this.actList);
+		}
+		
+		public function addElement(param1:*, param2:Boolean = false) : void
+		{
+			param1 = String(param1);
+			if(this._actList.indexOf(param1) == -1 && param2)
+			{
+				this._actList.push(param1);
+			}
+			if(this._actList.indexOf(param1) == -1)
+			{
+				this._actList.unshift(param1);
+			}
+			if(this._actList.length > 0)
+			{
+				if(this.addWAIcon != null)
+				{
+					this.addWAIcon();
+				}
+			}
+			if(Boolean(this._frame) && Boolean(this._frame.parent))
+			{
+				this._frame.addElement(this.actList);
+			}
+		}
+		
+		public function removeElement(param1:*) : void
+		{
+			param1 = String(param1);
+			var _loc2_:int = int(this._actList.indexOf(param1));
+			if(_loc2_ == -1)
+			{
+				return;
+			}
+			this._actList.splice(_loc2_,1);
+			if(this._actList.length == 0)
+			{
+				this.dispose();
+				return;
+			}
+			if(this._actList.length > 0)
+			{
+				if(this.currView == param1)
+				{
+					this.currView = this._actList[0];
+				}
+			}
+			if(Boolean(this._frame) && Boolean(this._frame.parent))
+			{
+				this._frame.addElement(this.actList);
+			}
+		}
+		
+		public function dispose() : void
+		{
+			if(!this.isRuning)
+			{
+				return;
+			}
+			this.clickWonderfulActView = false;
+			ObjectUtils.disposeObject(this._frame);
+			this._frame = null;
+			this.currentView = null;
+			this.isSkipFromHall = false;
+			this.skipType = "0";
+			if(Boolean(this._timer))
+			{
+				this._timer.stop();
+				this._timer.removeEventListener(TimerEvent.TIMER,this.timerHander);
+				this._timer = null;
+			}
+			if(this._actList.length == 0)
+			{
+				if(this.deleWAIcon != null)
+				{
+					this.deleWAIcon();
+				}
+			}
+		}
+		
+		protected function onUIProgress(param1:UIModuleEvent) : void
+		{
+			if(param1.module == UIModuleTypes.WONDERFULACTIVI)
+			{
+				UIModuleSmallLoading.Instance.progress = param1.loader.progress * 100;
+			}
+		}
+		
+		protected function createActivityFrame(param1:UIModuleEvent) : void
+		{
+			var _loc2_:BaseLoader = null;
+			if(param1.module != UIModuleTypes.WONDERFULACTIVI)
+			{
+				return;
+			}
+			UIModuleSmallLoading.Instance.hide();
+			UIModuleSmallLoading.Instance.removeEventListener(Event.CLOSE,this.onSmallLoadingClose);
+			UIModuleLoader.Instance.removeEventListener(UIModuleEvent.UI_MODULE_COMPLETE,this.createActivityFrame);
+			UIModuleLoader.Instance.removeEventListener(UIModuleEvent.UI_MODULE_PROGRESS,this.onUIProgress);
+			if(Boolean(WonderfulActivityManager.Instance.activityTypeList))
+			{
+				this._frame = ComponentFactory.Instance.creatComponentByStylename("com.wonderfulActivity.LimitActivityFrame");
+				LayerManager.Instance.addToLayer(this._frame,LayerManager.GAME_TOP_LAYER,true,LayerManager.BLCAK_BLOCKGOUND);
+				this._frame.addElement(this.actList);
+			}
+			else
+			{
+				_loc2_ = StartupResourceLoader.Instance.creatWondActiveLoader();
+				_loc2_.addEventListener(Event.COMPLETE,this.__dataLoaderCompleteHandler);
+			}
+		}
+		
+		private function __dataLoaderCompleteHandler(param1:LoaderEvent) : void
+		{
+			var _loc2_:BaseLoader = param1.loader;
+			_loc2_.removeEventListener(LoaderEvent.COMPLETE,this.__dataLoaderCompleteHandler);
+			this._frame = ComponentFactory.Instance.creatComponentByStylename("com.wonderfulActivity.LimitActivityFrame");
+			LayerManager.Instance.addToLayer(this._frame,LayerManager.GAME_TOP_LAYER,true,LayerManager.BLCAK_BLOCKGOUND);
+			this._frame.addElement(this.actList);
+		}
+		
+		private function checkActivity(param1:int = 0) : void
+		{
+			var _loc2_:GmActivityInfo = null;
+			var _loc3_:int = 0;
+			var _loc4_:int = 0;
+			var _loc5_:String = null;
+			var _loc6_:int = 0;
+			var _loc7_:Boolean = false;
+			var _loc8_:LeftViewInfoVo = null;
+			var _loc9_:Boolean = false;
+			var _loc10_:LeftViewInfoVo = null;
+			var _loc11_:Boolean = false;
+			var _loc12_:LeftViewInfoVo = null;
+			if(this.activityData == null)
+			{
+				return;
+			}
+			var _loc13_:Array = [];
+			var _loc14_:Date = TimeManager.Instance.Now();
+			for each(_loc2_ in this.activityData)
+			{
+				if(_loc14_.time < Date.parse(_loc2_.beginTime) || _loc14_.time > Date.parse(_loc2_.endShowTime))
+				{
+					continue;
+				}
+				switch(_loc2_.activityType)
+				{
+					case WonderfulActivityTypeData.MAIN_PAY_ACTIVITY:
+						switch(_loc2_.activityChildType)
+						{
+							case WonderfulActivityTypeData.FIRST_CONTACT:
+								break;
+							case WonderfulActivityTypeData.ACC_FIRST_PAY:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.ONE_OFF_PAY:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.ACCUMULATIVE_PAY:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACCUMULATIVE_PAY,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.NEWGAMEBENIFIT:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.NEWGAMEBENIFIT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.PAY_RETURN:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.PAY_RETURN,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.ONE_OFF_IN_TIME:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.MAIN_CONSUME_ACTIVITY:
+						switch(_loc2_.activityChildType)
+						{
+							case WonderfulActivityTypeData.ONE_OFF_CONSUME:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.CONSUME_RETURN:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.CONSUME_RETURN,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+								break;
+							case WonderfulActivityTypeData.SPECIFIC_COUNT_CONSUME:
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.MAIN_FAMOUS_ACTIVITY:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.HERO_POWER || _loc2_.activityChildType == WonderfulActivityTypeData.HERO_GRADE)
+						{
+							for each(_loc8_ in this.leftViewInfoDic)
+							{
+								if(_loc8_.viewType == ActivityType.HERO)
+								{
+									_loc7_ = true;
+									break;
+								}
+							}
+							if(!_loc7_)
+							{
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.HERO,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								this._existentId = _loc2_.activityId;
+							}
+							else
+							{
+								this._mutilIdMapping[_loc2_.activityId] = this._existentId;
+							}
+							if(_loc13_.indexOf(_loc2_.activityId) == -1)
+							{
+								_loc13_.push(_loc2_.activityId);
+							}
+						}
+						break;
+					case WonderfulActivityTypeData.CONSORTION_ACTIVITY:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.TUANJIE_POWER)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.TUANJIE_POWER,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.STRENGTHEN_ACTIVITY:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.STRENGTHEN_DAREN)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.STRENGTHEN_DAREN,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.EXCHANGE_ACTIVITY:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.NORMAL_EXCHANGE)
+						{
+							this.exchangeActLeftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.NORMAL_EXCHANGE,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.MARRY_ACTIVITY:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.HOLD_WEDDING)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.ACT_ANNOUNCEMENT,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.CARNIVAL_ACTIVITY:
+						switch(_loc2_.activityChildType)
+						{
+							case WonderfulActivityTypeData.CARNIVAL_GRADE:
+								_loc6_ = ActivityType.CARNIVAL_GRADE;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_STRENGTH:
+								_loc6_ = ActivityType.CARNIVAL_STRENGTH;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_FUSION:
+								_loc6_ = ActivityType.CARNIVAL_FUSION;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_ROOKIE:
+							case WonderfulActivityTypeData.CARNIVAL_ROOKIE_TWO:
+								for each(_loc10_ in this.leftViewInfoDic)
+							{
+								if(_loc10_.viewType == ActivityType.CARNIVAL_ROOKIE)
+								{
+									_loc9_ = true;
+									break;
+								}
+							}
+								if(!_loc9_)
+								{
+									_loc6_ = ActivityType.CARNIVAL_ROOKIE;
+									this._existentId = _loc2_.activityId;
+								}
+								else
+								{
+									_loc6_ = 0;
+									this._mutilIdMapping[_loc2_.activityId] = this._existentId;
+								}
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_BEAD:
+								_loc6_ = ActivityType.CARNIVAL_BEAD;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_TOTEM:
+								_loc6_ = ActivityType.CARNIVAL_TOTEM;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_PRACTICE:
+								_loc6_ = ActivityType.CARNIVAL_PRACTICE;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_CARD:
+								_loc6_ = ActivityType.CARNIVAL_CARD;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_ZHANHUN:
+								_loc6_ = ActivityType.CARNIVAL_ZHANHUN;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_MOUNT_LEVEL:
+								_loc6_ = ActivityType.CARNIVAL_MOUNT_MASTER;
+								break;
+							case WonderfulActivityTypeData.CARNIVAL_PET:
+								_loc6_ = ActivityType.CARNIVAL_PET;
+						}
+						if(_loc6_ != 0)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(_loc6_,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+						}
+						if(_loc13_.indexOf(_loc2_.activityId) == -1)
+						{
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.MOUNT_MASTER:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.MOUNT_LEVEL)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.MOUNT_MASTER_LEVEL,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						else if(_loc2_.activityChildType == WonderfulActivityTypeData.MOUNT_SKILL)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.MOUNT_MASTER_SKILL,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						dispatchEvent(new Event(UPDATE_MOUNT_MASTER));
+						break;
+					case WonderfulActivityTypeData.GOD_TEMPLE:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.GOD_TEMPLE_LEVEL_UP)
+						{
+							this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.GOD_TEMPLE_LEVEL,"· " + _loc2_.activityName,_loc2_.icon);
+							this.addElement(_loc2_.activityId);
+							_loc13_.push(_loc2_.activityId);
+						}
+						break;
+					case WonderfulActivityTypeData.WHOLEPEOPLE_VIP:
+						this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.WHOLEPEOPLE_VIP,"· " + _loc2_.activityName,_loc2_.icon);
+						this.addElement(_loc2_.activityId);
+						_loc13_.push(_loc2_.activityId);
+						break;
+					case WonderfulActivityTypeData.WHOLEPEOPLE_PET:
+						this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.WHOLEPEOPLE_PET,"· " + _loc2_.activityName,_loc2_.icon);
+						this.addElement(_loc2_.activityId);
+						_loc13_.push(_loc2_.activityId);
+						break;
+					case WonderfulActivityTypeData.DAILY_GIFT:
+						if(_loc2_.activityChildType == WonderfulActivityTypeData.DAILY_GIFT_BEAD || _loc2_.activityChildType == WonderfulActivityTypeData.DAILY_GIFT_CARD || _loc2_.activityChildType == WonderfulActivityTypeData.DAILY_GIFT_PLANT || _loc2_.activityChildType == WonderfulActivityTypeData.DAILY_GIFT_STONE || _loc2_.activityChildType == WonderfulActivityTypeData.DAILY_GIFT_USE)
+						{
+							for each(_loc12_ in this.leftViewInfoDic)
+							{
+								if(_loc12_.viewType == ActivityType.DAILY_GIFT)
+								{
+									_loc11_ = true;
+									break;
+								}
+							}
+							if(!_loc11_)
+							{
+								this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.DAILY_GIFT,"· " + _loc2_.activityName,_loc2_.icon);
+								this.addElement(_loc2_.activityId);
+								this._existentId = _loc2_.activityId;
+							}
+							else
+							{
+								this._mutilIdMapping[_loc2_.activityId] = this._existentId;
+							}
+							if(_loc13_.indexOf(_loc2_.activityId) == -1)
+							{
+								_loc13_.push(_loc2_.activityId);
+							}
+						}
+						break;
+					case WonderfulActivityTypeData.SIGNACTIVITY:
+						this.leftViewInfoDic[_loc2_.activityId] = new LeftViewInfoVo(ActivityType.SIGNACTIVITY,"· " + _loc2_.activityName,_loc2_.icon);
+						SignActivityMgr.instance.model.giftbagArray = _loc2_.giftbagArray;
+						SignActivityMgr.instance.model.beginTime = _loc2_.beginShowTime.split(" ")[0];
+						SignActivityMgr.instance.model.endTime = _loc2_.endShowTime.split(" ")[0];
+						SignActivityMgr.instance.model.actId = _loc2_.activityId;
+						SignActivityMgr.instance.showIcon(true);
+				}
+			}
+			_loc3_ = -1;
+			_loc4_ = 0;
+			while(_loc4_ <= _loc13_.length - 1)
+			{
+				_loc3_ = int(this.lastActList.indexOf(_loc13_[_loc4_]));
+				if(_loc3_ >= 0)
+				{
+					this.lastActList.splice(_loc3_,1);
+				}
+				_loc4_++;
+			}
+			for each(_loc5_ in this.lastActList)
+			{
+				if(Boolean(this.leftViewInfoDic[_loc5_]))
+				{
+					this.leftViewInfoDic[_loc5_] = null;
+					delete this.leftViewInfoDic[_loc5_];
+				}
+				else if(Boolean(this.exchangeActLeftViewInfoDic[_loc5_]))
+				{
+					this.exchangeActLeftViewInfoDic[_loc5_] = null;
+					delete this.exchangeActLeftViewInfoDic[_loc5_];
+				}
+				this.removeElement(_loc5_);
+			}
+			this.lastActList = _loc13_;
+			this.checkActState();
+		}
+		
+		private function createSendGiftFrame() : void
+		{
+			this._sendGiftFrame = ComponentFactory.Instance.creatComponentByStylename("com.wonderfulActivity.sendGiftFrame");
+			this._sendGiftFrame.setData(this._info);
+			this.sendGiftIsOut = true;
+			setTimeout(this.checkShowSendGiftFrame,2);
+		}
+		
+		public function refreshIconStatus() : void
+		{
+			var _local_1:String = null;
+			this.checkActState();
+			if(Boolean(this._wonderfulIcon))
+			{
+				for(_local_1 in this.stateDic)
+				{
+					if(Boolean(this.stateDic[_local_1]))
+					{
+						this._wonderfulIcon.setFrame(2);
+						return;
+					}
+				}
+				this._wonderfulIcon.setFrame(1);
+			}
+		}
+		
+		public function checkShowSendGiftFrame() : void
+		{
+			if(this.sendGiftIsOut && this.firstShowSendGiftFrame)
+			{
+				this.firstShowSendGiftFrame = false;
+				LayerManager.Instance.addToLayer(this._sendGiftFrame,LayerManager.GAME_TOP_LAYER,true,LayerManager.BLCAK_BLOCKGOUND);
+			}
+		}
+		
+		public function getActIdWithViewId(param1:int) : String
+		{
+			var _loc2_:* = null;
+			var _loc3_:LeftViewInfoVo = null;
+			for(_loc2_ in this.leftViewInfoDic)
+			{
+				_loc3_ = this.leftViewInfoDic[_loc2_];
+				if(_loc3_.viewType == param1)
+				{
+					return _loc2_;
+				}
+			}
+			return "";
+		}
+		
+		private function checkActState() : void
+		{
+			var _local_23:Number = NaN;
+			var _local_154:int = 0;
+			var _local_66:int = 0;
+			var _local_126:int = 0;
+			var _local_46:int = 0;
+			var _local_128:int = 0;
+			var _local_42:int = 0;
+			var _local_54:int = 0;
+			var _local_134:int = 0;
+			var _local_20:int = 0;
+			var _local_87:int = 0;
+			var _local_3:int = 0;
+			var _local_158:int = 0;
+			var _local_95:int = 0;
+			var _local_75:int = 0;
+			var _local_26:int = 0;
+			var _local_125:int = 0;
+			var _local_151:int = 0;
+			var _local_116:int = 0;
+			var _local_1:int = 0;
+			var _local_135:int = 0;
+			var _local_7:int = 0;
+			var _local_57:int = 0;
+			var _local_131:int = 0;
+			var _local_144:int = 0;
+			var _local_19:int = 0;
+			var _local_118:int = 0;
+			var _local_18:int = 0;
+			var _local_91:int = 0;
+			var _local_157:int = 0;
+			var _local_60:int = 0;
+			var _local_28:int = 0;
+			var _local_146:int = 0;
+			var _local_117:int = 0;
+			var _local_70:int = 0;
+			var _local_16:int = 0;
+			var _local_2:int = 0;
+			var _local_5:int = 0;
+			var _local_49:int = 0;
+			var _local_41:int = 0;
+			var _local_61:Boolean = false;
+			var _local_109:Boolean = false;
+			var _local_132:Boolean = false;
+			var _local_110:int = 0;
+			var _local_102:int = 0;
+			var _local_55:int = 0;
+			var _local_77:int = 0;
+			var _local_106:int = 0;
+			var _local_136:int = 0;
+			var _local_120:int = 0;
+			var _local_36:int = 0;
+			var _local_112:int = 0;
+			var _local_24:int = 0;
+			var _local_92:Boolean = false;
+			var _local_123:Boolean = false;
+			var _local_29:Boolean = false;
+			var _local_27:Boolean = false;
+			var _local_140:Boolean = false;
+			var _local_43:int = 0;
+			var _local_78:int = 0;
+			var _local_17:int = 0;
+			var _local_138:int = 0;
+			var _local_48:int = 0;
+			var _local_12:int = 0;
+			var _local_79:int = 0;
+			var _local_65:int = 0;
+			var _local_93:int = 0;
+			var _local_72:int = 0;
+			var _local_40:int = 0;
+			var _local_127:Boolean = false;
+			var _local_149:Boolean = false;
+			var _local_39:Boolean = false;
+			var _local_21:Boolean = false;
+			var _local_80:Boolean = false;
+			var _local_156:int = 0;
+			var _local_37:int = 0;
+			var _local_13:* = undefined;
+			var _local_64:int = 0;
+			var _local_14:int = 0;
+			var _local_141:int = 0;
+			var _local_155:int = 0;
+			var _local_6:int = 0;
+			var _local_152:int = 0;
+			var _local_121:int = 0;
+			var _local_85:int = 0;
+			var _local_145:int = 0;
+			var _local_62:int = 0;
+			var _local_101:int = 0;
+			var _local_84:int = 0;
+			var _local_38:int = 0;
+			var _local_100:int = 0;
+			var _local_47:int = 0;
+			var _local_31:int = 0;
+			var _local_82:int = 0;
+			var _local_103:int = 0;
+			var _local_34:int = 0;
+			var _local_35:Boolean = false;
+			var _local_107:int = 0;
+			var _local_81:int = 0;
+			var _local_44:int = 0;
+			var _local_97:int = 0;
+			var _local_33:int = 0;
+			var _local_108:int = 0;
+			var _local_129:int = 0;
+			var _local_113:int = 0;
+			var _local_58:int = 0;
+			var _local_89:int = 0;
+			var _local_32:int = 0;
+			var _local_111:int = 0;
+			var _local_153:int = 0;
+			var _local_53:int = 0;
+			var _local_30:int = 0;
+			var _local_99:String = null;
+			var _local_51:GiftBagInfo = null;
+			var _local_142:GiftBagInfo = null;
+			var _local_114:PlayerCurInfo = null;
+			var _local_143:GiftBagInfo = null;
+			var _local_105:PlayerCurInfo = null;
+			var _local_8:PlayerCurInfo = null;
+			var _local_45:GiftBagInfo = null;
+			var _local_22:GiftBagInfo = null;
+			var _local_50:PlayerCurInfo = null;
+			var _local_133:PlayerCurInfo = null;
+			var _local_56:GiftBagInfo = null;
+			var _local_83:PlayerCurInfo = null;
+			var _local_10:GiftBagInfo = null;
+			var _local_104:GmActivityInfo = null;
+			var _local_15:PlayerCurInfo = null;
+			var _local_115:GiftBagInfo = null;
+			var _local_137:GiftBagInfo = null;
+			var _local_159:PlayerCurInfo = null;
+			var _local_4:GiftBagInfo = null;
+			var _local_150:PlayerCurInfo = null;
+			var _local_59:GmActivityInfo = null;
+			var _local_122:GiftBagInfo = null;
+			var _local_124:PlayerCurInfo = null;
+			var _local_88:GiftBagInfo = null;
+			var _local_76:GiftBagInfo = null;
+			var _local_9:PlayerCurInfo = null;
+			var _local_74:GiftBagInfo = null;
+			var _local_98:PlayerCurInfo = null;
+			var _local_73:GiftBagInfo = null;
+			var _local_96:PlayerCurInfo = null;
+			var _local_71:GiftBagInfo = null;
+			var _local_94:PlayerCurInfo = null;
+			var _local_68:GiftBagInfo = null;
+			var _local_90:PlayerCurInfo = null;
+			var _local_11:* = null;
+			var _local_119:* = null;
+			var _local_86:* = null;
+			var _local_69:* = null;
+			var _local_67:* = null;
+			var _local_148:* = null;
+			var _local_25:* = null;
+			var _local_52:* = null;
+			var _local_130:* = null;
+			var _local_147:* = null;
+			var _local_63:* = null;
+			var _local_139:* = null;
+			for(_local_99 in this.leftViewInfoDic)
+			{
+				this.stateDic[this.leftViewInfoDic[_local_99].viewType] = false;
+				if(!this.activityData[_local_99] || !this.activityInitData[_local_99])
+				{
+					continue;
+				}
+				_local_11 = this.leftViewInfoDic[_local_99];
+				_local_119 = this.activityInitData[_local_99].giftInfoDic;
+				_local_86 = this.activityInitData[_local_99].statusArr;
+				_local_69 = this.activityData[_local_99];
+				_local_23 = TimeManager.Instance.Now().time;
+				switch(_local_11.viewType)
+				{
+					case 16:
+						break;
+					case 18:
+					case 19:
+						for each(_local_51 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_51.giftbagId])
+						{
+							break;
+						}
+						_local_154 = int(_local_119[_local_51.giftbagId].times);
+						if(_local_51.giftConditionArr[2].conditionValue == 0)
+						{
+							_local_66 = int(int(Math.floor(_local_86[0].statusValue / _local_51.giftConditionArr[0].conditionValue)) - _local_154);
+							if(_local_66 > 0)
+							{
+								this.stateDic[_local_11.viewType] = true;
+								break;
+							}
+						}
+						else if(_local_154 == 0 && Math.floor(_local_86[0].statusValue / _local_51.giftConditionArr[0].conditionValue) > 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 17:
+						for each(_local_142 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_142.giftbagId])
+						{
+							break;
+						}
+						_local_126 = int(_local_119[_local_142.giftbagId].times);
+						for each(_local_114 in _local_86)
+						{
+							if(_local_114.statusID == _local_142.giftConditionArr[0].conditionValue)
+							{
+								_local_46 = _local_114.statusValue - _local_126;
+							}
+						}
+						if(_local_142.giftConditionArr[2].conditionValue == 0)
+						{
+							if(_local_46 > 0)
+							{
+								this.stateDic[_local_11.viewType] = true;
+								break;
+							}
+						}
+						else if(_local_126 == 0 && _local_46 > 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 88:
+						for each(_local_143 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_143.giftbagId])
+						{
+							break;
+						}
+						_local_128 = int(_local_119[_local_143.giftbagId].times);
+						for each(_local_105 in _local_86)
+						{
+							if(_local_105.statusID == _local_143.giftConditionArr[0].conditionValue)
+							{
+								_local_42 = _local_105.statusValue - _local_128;
+							}
+						}
+						if(_local_143.giftConditionArr[0].conditionValue == 0)
+						{
+							if(_local_42 > 0)
+							{
+								this.stateDic[_local_11.viewType] = true;
+								break;
+							}
+						}
+						else if(_local_128 == 0 && _local_42 > 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 24:
+						for each(_local_8 in _local_86)
+					{
+						if(_local_8.statusID == 0)
+						{
+							_local_54 = _local_8.statusValue;
+						}
+						else if(_local_8.statusID == 1)
+						{
+							_local_134 = _local_8.statusValue;
+						}
+					}
+						for each(_local_45 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_45.giftbagId])
+						{
+							break;
+						}
+						_local_87 = 0;
+						while(_local_87 < _local_45.giftConditionArr.length)
+						{
+							if(_local_45.giftConditionArr[_local_87].conditionIndex == 0)
+							{
+								_local_20 = _local_45.giftConditionArr[_local_87].remain1;
+								break;
+							}
+							_local_87++;
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_119[_local_45.giftbagId].times == 0 && _local_20 > _local_54 && _local_20 <= _local_134)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 25:
+						for each(_local_22 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_22.giftbagId])
+						{
+							break;
+						}
+						_local_95 = 0;
+						while(_local_95 < _local_22.giftConditionArr.length)
+						{
+							if(_local_22.giftConditionArr[_local_95].conditionIndex == 0)
+							{
+								_local_3 = _local_22.giftConditionArr[_local_95].conditionValue;
+							}
+							else
+							{
+								_local_158 = _local_22.giftConditionArr[_local_95].conditionValue;
+							}
+							_local_95++;
+						}
+						_local_75 = 0;
+						_local_26 = 0;
+						for each(_local_50 in _local_86)
+						{
+							if(_local_50.statusID == _local_3)
+							{
+								_local_75 = _local_50.statusValue;
+							}
+							else if(_local_50.statusID == 100 + _local_3)
+							{
+								_local_26 = _local_50.statusValue;
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_119[_local_22.giftbagId].times == 0 && _local_158 > _local_75 && _local_158 <= _local_26)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 41:
+						for each(_local_133 in _local_86)
+					{
+						if(_local_133.statusID == 0)
+						{
+							_local_125 = _local_133.statusValue;
+						}
+						else if(_local_133.statusID == 1)
+						{
+							_local_151 = _local_133.statusValue;
+						}
+					}
+						for each(_local_56 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_56.giftbagId])
+						{
+							break;
+						}
+						_local_1 = 0;
+						while(_local_1 < _local_56.giftConditionArr.length)
+						{
+							if(_local_56.giftConditionArr[_local_1].conditionIndex == 0)
+							{
+								_local_116 = _local_56.giftConditionArr[_local_1].remain1;
+								break;
+							}
+							_local_1++;
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_119[_local_56.giftbagId].times == 0 && _local_116 > _local_125 && _local_116 <= _local_151)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 30:
+					case 33:
+					case 28:
+					case 26:
+					case 36:
+					case 32:
+					case 27:
+					case 31:
+					case 34:
+					case 35:
+						_local_135 = int(_local_86[0].statusValue);
+						_local_7 = 0;
+						_local_57 = 0;
+						if(_local_11.viewType == 35)
+						{
+							for each(_local_83 in _local_86)
+							{
+								if(_local_83.statusID == 0)
+								{
+									_local_7 = _local_83.statusValue;
+								}
+								else if(_local_83.statusID == 1)
+								{
+									_local_57 = _local_83.statusValue;
+								}
+							}
+						}
+						for each(_local_10 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_10.giftbagId])
+						{
+							break;
+						}
+						if(_local_10.rewardMark != 100)
+						{
+							_local_19 = int(_local_119[_local_10.giftbagId].times);
+							_local_118 = int(_local_119[_local_10.giftbagId].allGiftGetTimes);
+							_local_18 = 0;
+							while(_local_18 < _local_10.giftConditionArr.length)
+							{
+								if(_local_10.giftConditionArr[_local_18].conditionIndex == 0)
+								{
+									_local_131 = _local_10.giftConditionArr[_local_18].conditionValue;
+								}
+								else if(_local_10.giftConditionArr[_local_18].conditionIndex == 100)
+								{
+									_local_144 = _local_10.giftConditionArr[_local_18].conditionValue;
+								}
+								_local_18++;
+							}
+							if(_local_11.viewType == 35)
+							{
+								if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_19 == 0 && _local_131 > _local_7 && _local_131 <= _local_57 && (_local_144 == 0 || _local_144 - _local_118 > 0))
+								{
+									this.stateDic[_local_11.viewType] = true;
+									break;
+								}
+							}
+							else if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_19 == 0 && _local_135 >= _local_131 && (_local_144 == 0 || _local_144 - _local_118 > 0))
+							{
+								this.stateDic[_local_11.viewType] = true;
+								break;
+							}
+						}
+					}
+						break;
+					case 29:
+						_local_148 = [];
+						for each(_local_104 in this.activityData)
+					{
+						if(_local_104.activityType == 15 && (_local_104.activityChildType == 4 || _local_104.activityChildType == 12))
+						{
+							_local_148.push(_local_104);
+						}
+					}
+						_local_91 = 0;
+						_local_157 = 0;
+						for each(_local_15 in _local_86)
+					{
+						if(_local_15.statusID == 0)
+						{
+							_local_91 = _local_15.statusValue;
+						}
+						else
+						{
+							_local_157 = _local_15.statusValue;
+						}
+					}
+						_local_25 = TimeManager.Instance.Now();
+						_local_60 = 0;
+						while(_local_60 < _local_148.length)
+						{
+							if(!(_local_25.time < Date.parse(_local_148[_local_60].beginTime) || _local_25.time > Date.parse(_local_148[_local_60].endShowTime)))
+							{
+								_local_28 = -1;
+								_local_146 = -1;
+								_local_117 = -1;
+								_local_16 = 0;
+								for each(_local_115 in _local_148[_local_60].giftbagArray)
+								{
+									if(!this.activityInitData[_local_148[_local_60].activityId].giftInfoDic[_local_115.giftbagId])
+									{
+										break;
+									}
+									_local_67 = this.activityInitData[_local_148[_local_60].activityId].giftInfoDic[_local_115.giftbagId];
+									if(_local_115.rewardMark != 100)
+									{
+										_local_16 = int(_local_67.times);
+										_local_2 = 0;
+										while(_local_2 < _local_115.giftConditionArr.length)
+										{
+											if(_local_115.giftConditionArr[_local_2].conditionIndex == 0)
+											{
+												_local_28 = _local_115.giftConditionArr[_local_2].conditionValue;
+											}
+											else if(_local_115.giftConditionArr[_local_2].conditionIndex == 1)
+											{
+												_local_146 = _local_115.giftConditionArr[_local_2].conditionValue;
+												_local_117 = _local_115.giftConditionArr[_local_2].remain1;
+											}
+											else if(_local_115.giftConditionArr[_local_2].conditionIndex == 100)
+											{
+												_local_70 = _local_115.giftConditionArr[_local_2].conditionValue;
+											}
+											_local_2++;
+										}
+										if(_local_28 != -1)
+										{
+											if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_16 == 0 && _local_91 >= _local_28)
+											{
+												this.stateDic[_local_11.viewType] = true;
+												break;
+											}
+										}
+										else if(_local_23 >= Date.parse(_local_69.endTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_16 == 0 && _local_157 >= _local_146 && _local_157 <= _local_117)
+										{
+											this.stateDic[_local_11.viewType] = true;
+											break;
+										}
+									}
+								}
+							}
+							_local_60++;
+						}
+						break;
+					case 38:
+						for each(_local_137 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_137.giftbagId])
+						{
+							break;
+						}
+						if(_local_137.rewardMark != 100)
+						{
+							_local_5 = -1;
+							_local_49 = -1;
+							_local_41 = -1;
+							_local_61 = false;
+							_local_109 = false;
+							_local_132 = false;
+							_local_110 = 0;
+							_local_102 = 0;
+							_local_55 = 0;
+							_local_77 = 0;
+							_local_106 = 0;
+							_local_136 = 0;
+							_local_120 = 0;
+							_local_36 = int(_local_119[_local_137.giftbagId].times);
+							_local_112 = 0;
+							while(_local_112 < _local_137.giftConditionArr.length)
+							{
+								if(_local_137.giftConditionArr[_local_112].conditionIndex == 4)
+								{
+									_local_132 = true;
+								}
+								else if(_local_137.giftConditionArr[_local_112].conditionIndex == 5)
+								{
+									_local_109 = true;
+								}
+								else if(_local_137.giftConditionArr[_local_112].conditionIndex == 6)
+								{
+									_local_61 = true;
+								}
+								_local_112++;
+							}
+							_local_24 = 0;
+							while(_local_24 < _local_137.giftConditionArr.length)
+							{
+								if(_local_137.giftConditionArr[_local_24].conditionIndex == (_local_132 ? 4 : 0))
+								{
+									_local_110 = _local_137.giftConditionArr[_local_24].conditionValue;
+									_local_5 = _local_137.giftConditionArr[_local_24].remain1;
+								}
+								else if(_local_137.giftConditionArr[_local_24].conditionIndex == (_local_109 ? 5 : 1))
+								{
+									_local_102 = _local_137.giftConditionArr[_local_24].conditionValue;
+									_local_49 = _local_137.giftConditionArr[_local_24].remain1;
+								}
+								else if(_local_137.giftConditionArr[_local_24].conditionIndex == (_local_61 ? 6 : 2))
+								{
+									_local_55 = _local_137.giftConditionArr[_local_24].conditionValue;
+									_local_41 = _local_137.giftConditionArr[_local_24].remain1;
+								}
+								else if(_local_137.giftConditionArr[_local_24].conditionIndex == 3)
+								{
+									_local_77 = _local_137.giftConditionArr[_local_24].conditionValue;
+								}
+								_local_24++;
+							}
+							for each(_local_159 in _local_86)
+							{
+								if(_local_159.statusID >= _local_110 + (_local_132 ? 200 : 0) && _local_159.statusID < 50 + (_local_132 ? 200 : 0))
+								{
+									_local_120 += _local_159.statusValue;
+								}
+								else if(_local_159.statusID == _local_102 + (_local_109 ? 300 : 100))
+								{
+									_local_136 = _local_159.statusValue;
+								}
+								else if(_local_159.statusID == _local_55 + (_local_61 ? 300 : 100))
+								{
+									_local_106 = _local_159.statusValue;
+								}
+							}
+							_local_92 = _local_41 != -1 ? int(_local_106 / _local_41) > _local_36 : true;
+							_local_123 = _local_49 != -1 ? _local_136 >= _local_49 : true;
+							_local_29 = _local_5 != -1 ? _local_120 >= _local_5 : true;
+							_local_27 = _local_77 == 0 ? true : _local_36 < _local_77;
+							_local_140 = _local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_92 && _local_123 && _local_29 && _local_27;
+							if(_local_41 != -1)
+							{
+								if(_local_140 && int(_local_106 / _local_41) - _local_36 >= 1)
+								{
+									this.stateDic[_local_11.viewType] = true;
+									break;
+								}
+							}
+							else if(_local_140 && _local_36 == 0)
+							{
+								this.stateDic[_local_11.viewType] = true;
+								break;
+							}
+						}
+					}
+						break;
+					case 37:
+						if(PlayerManager.Instance.Self.IsVIP)
+						{
+							this.stateDic[_local_11.viewType] = false;
+						}
+						else
+						{
+							for each(_local_4 in _local_69.giftbagArray)
+							{
+								if(!_local_119[_local_4.giftbagId])
+								{
+									break;
+								}
+								if(_local_4.rewardMark != 100)
+								{
+									_local_43 = -1;
+									_local_78 = -1;
+									_local_17 = -1;
+									_local_138 = 0;
+									_local_48 = 0;
+									_local_12 = 0;
+									_local_79 = 0;
+									_local_65 = 0;
+									_local_93 = 0;
+									_local_72 = int(_local_119[_local_4.giftbagId].times);
+									_local_40 = 0;
+									while(_local_40 < _local_4.giftConditionArr.length)
+									{
+										if(_local_4.giftConditionArr[_local_40].conditionIndex == 0)
+										{
+											_local_43 = _local_4.giftConditionArr[_local_40].conditionValue;
+										}
+										else if(_local_4.giftConditionArr[_local_40].conditionIndex == 1)
+										{
+											_local_138 = _local_4.giftConditionArr[_local_40].conditionValue;
+											_local_78 = _local_4.giftConditionArr[_local_40].remain1;
+										}
+										else if(_local_4.giftConditionArr[_local_40].conditionIndex == 2)
+										{
+											_local_48 = _local_4.giftConditionArr[_local_40].conditionValue;
+											_local_17 = _local_4.giftConditionArr[_local_40].remain1;
+										}
+										else if(_local_4.giftConditionArr[_local_40].conditionIndex == 3)
+										{
+											_local_12 = _local_4.giftConditionArr[_local_40].conditionValue;
+										}
+										_local_40++;
+									}
+									for each(_local_150 in _local_86)
+									{
+										if(_local_150.statusID == 0)
+										{
+											_local_93 = _local_150.statusValue;
+										}
+										else if(_local_150.statusID == _local_138)
+										{
+											_local_65 = _local_150.statusValue;
+										}
+										else if(_local_150.statusID == _local_48)
+										{
+											_local_79 = _local_150.statusValue;
+										}
+									}
+									_local_127 = _local_17 != -1 ? int(_local_79 / _local_17) > _local_72 : true;
+									_local_149 = _local_78 != -1 ? _local_65 >= _local_78 : true;
+									_local_39 = _local_43 != -1 ? _local_93 >= _local_43 : true;
+									_local_21 = _local_12 == 0 ? true : _local_72 < _local_12;
+									_local_80 = _local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_127 && _local_149 && _local_39 && _local_21;
+									if(_local_17 != -1)
+									{
+										if(_local_80 && int(_local_79 / _local_17) - _local_72 >= 1)
+										{
+											this.stateDic[_local_11.viewType] = true;
+											break;
+										}
+									}
+									else if(_local_80 && _local_72 == 0)
+									{
+										this.stateDic[_local_11.viewType] = true;
+										break;
+									}
+								}
+							}
+						}
+						break;
+					case 39:
+						_local_130 = [];
+						for each(_local_59 in this.activityData)
+					{
+						if(_local_59.activityType == 18)
+						{
+							_local_130.push(_local_59);
+						}
+					}
+						_local_156 = 0;
+						_local_37 = 0;
+						_local_13 = 0;
+						_local_64 = 0;
+						_local_14 = 0;
+						_local_147 = TimeManager.Instance.Now();
+						_local_6 = 0;
+						while(_local_6 < _local_130.length)
+						{
+							if(!(_local_147.time < Date.parse(_local_130[_local_6].beginTime) || _local_147.time > Date.parse(_local_130[_local_6].endShowTime)))
+							{
+								for each(_local_122 in _local_130[_local_6].giftbagArray)
+								{
+									if(!this.activityInitData[_local_130[_local_6].activityId].giftInfoDic[_local_122.giftbagId])
+									{
+										break;
+									}
+									_local_52 = this.activityInitData[_local_130[_local_6].activityId].giftInfoDic[_local_122.giftbagId];
+									if(_local_122.rewardMark != 100)
+									{
+										_local_155 = int(_local_52.times);
+										_local_152 = 0;
+										while(_local_152 < _local_122.giftConditionArr.length)
+										{
+											if(_local_122.giftConditionArr[_local_152].conditionIndex == 0)
+											{
+												_local_141 = 1;
+											}
+											else if(_local_122.giftConditionArr[_local_152].conditionIndex == 1)
+											{
+												_local_141 = 2;
+												_local_156 = _local_122.giftConditionArr[_local_152].remain1;
+												_local_13 = _local_122.giftConditionArr[_local_152].remain2;
+												if(_local_13 == 2)
+												{
+													_local_64 = _local_122.giftConditionArr[_local_152].conditionValue;
+												}
+												else
+												{
+													_local_14 = _local_122.giftConditionArr[_local_152].conditionValue;
+												}
+											}
+											else if(_local_122.giftConditionArr[_local_152].conditionIndex == 2)
+											{
+												_local_141 = 3;
+											}
+											else if(_local_122.giftConditionArr[_local_152].conditionIndex != 3)
+											{
+												if(_local_122.giftConditionArr[_local_152].conditionIndex > 50 && _local_122.giftConditionArr[_local_152].conditionIndex < 100)
+												{
+													_local_37 = _local_122.giftConditionArr[_local_152].conditionValue;
+													_local_156 = _local_122.giftConditionArr[_local_152].remain1;
+												}
+											}
+											_local_152++;
+										}
+										for each(_local_124 in this.activityInitData[_local_130[_local_6].activityId].statusArr)
+										{
+											if(_local_141 == 1 || _local_141 == 3)
+											{
+												if(_local_124.statusID == _local_37)
+												{
+													if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_155 == 0 && _local_124.statusValue >= _local_156)
+													{
+														this.stateDic[_local_11.viewType] = true;
+														break;
+													}
+												}
+											}
+											else if(_local_13 == 3)
+											{
+												if(_local_124.statusID == _local_14)
+												{
+													_local_63 = _local_124;
+												}
+											}
+											else if(_local_13 == 2)
+											{
+												if(_local_124.statusID == _local_64)
+												{
+													_local_139 = _local_124;
+												}
+											}
+											else if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_155 == 0 && _local_124.statusValue >= _local_156)
+											{
+												this.stateDic[_local_11.viewType] = true;
+												break;
+											}
+										}
+										if(_local_141 == 2)
+										{
+											if(_local_13 == 3)
+											{
+												if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_63 ? _local_155 == 0 && _local_63.statusValue >= _local_156 : false)
+												{
+													this.stateDic[_local_11.viewType] = true;
+													break;
+												}
+											}
+											else if(_local_13 == 2)
+											{
+												if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_139 ? _local_155 == 0 && _local_139.statusValue >= _local_156 : false)
+												{
+													this.stateDic[_local_11.viewType] = true;
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+							_local_6++;
+						}
+						break;
+					case 42:
+					case 46:
+					case 43:
+						for each(_local_88 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_88.giftbagId])
+						{
+							break;
+						}
+						_local_121 = int(_local_119[_local_88.giftbagId].times);
+						_local_62 = 0;
+						while(_local_62 < _local_88.giftConditionArr.length)
+						{
+							if(_local_88.giftConditionArr[_local_62].conditionIndex == 0)
+							{
+								_local_85 = _local_88.giftConditionArr[_local_62].conditionValue;
+							}
+							_local_62++;
+						}
+						_local_145 = int(_local_86[0].statusValue);
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_121 == 0 && _local_145 >= _local_85)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 47:
+						for each(_local_76 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_76.giftbagId])
+						{
+							break;
+						}
+						_local_101 = int(_local_119[_local_76.giftbagId].times);
+						_local_31 = 0;
+						while(_local_31 < _local_76.giftConditionArr.length)
+						{
+							if(_local_76.giftConditionArr[_local_31].conditionIndex == 0)
+							{
+								_local_84 = _local_76.giftConditionArr[_local_31].remain1;
+							}
+							_local_31++;
+						}
+						for each(_local_9 in _local_86)
+						{
+							if(_local_9.statusID == 0)
+							{
+								_local_38 = _local_9.statusValue;
+							}
+							else if(_local_9.statusID == 1)
+							{
+								_local_100 = _local_9.statusValue;
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_38 < _local_84 && _local_84 <= _local_100 && _local_101 == 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 44:
+						for each(_local_74 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_74.giftbagId])
+						{
+							break;
+						}
+						_local_103 = int(_local_119[_local_74.giftbagId].times);
+						_local_34 = 0;
+						while(_local_34 < _local_74.giftConditionArr.length)
+						{
+							if(_local_74.giftConditionArr[_local_34].conditionIndex == 0)
+							{
+								_local_82 = _local_74.giftConditionArr[_local_34].conditionValue;
+							}
+							_local_34++;
+						}
+						_local_35 = false;
+						for each(_local_98 in _local_86)
+						{
+							if(_local_98.statusID == _local_82)
+							{
+								if(_local_98.statusValue > 0)
+								{
+									_local_35 = true;
+									break;
+								}
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_35 && _local_103 == 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 45:
+						for each(_local_73 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_73.giftbagId])
+						{
+							break;
+						}
+						_local_107 = int(_local_119[_local_73.giftbagId].times);
+						_local_33 = 0;
+						while(_local_33 < _local_73.giftConditionArr.length)
+						{
+							if(_local_73.giftConditionArr[_local_33].conditionIndex == 0)
+							{
+								_local_81 = _local_73.giftConditionArr[_local_33].conditionValue;
+								_local_44 = _local_73.giftConditionArr[_local_33].remain1;
+							}
+							_local_33++;
+						}
+						for each(_local_96 in _local_86)
+						{
+							if(_local_96.statusID == _local_81)
+							{
+								_local_97 = _local_96.statusValue;
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_97 >= _local_44 && _local_107 == 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 49:
+						for each(_local_71 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_71.giftbagId])
+						{
+							break;
+						}
+						_local_108 = int(_local_119[_local_71.giftbagId].times);
+						_local_32 = 0;
+						while(_local_32 < _local_71.giftConditionArr.length)
+						{
+							_local_129 = _local_71.giftConditionArr[_local_32].conditionIndex;
+							if(_local_129 > 50 && _local_129 < 100)
+							{
+								_local_113 = _local_71.giftConditionArr[_local_32].conditionValue;
+								_local_58 = _local_71.giftConditionArr[_local_32].remain1;
+							}
+							_local_32++;
+						}
+						for each(_local_94 in _local_86)
+						{
+							if(_local_94.statusID == _local_113)
+							{
+								_local_89 = _local_94.statusValue;
+								break;
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_89 >= _local_58 && _local_108 == 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+						break;
+					case 48:
+						for each(_local_68 in _local_69.giftbagArray)
+					{
+						if(!_local_119[_local_68.giftbagId])
+						{
+							break;
+						}
+						_local_111 = int(_local_119[_local_68.giftbagId].times);
+						_local_30 = 0;
+						while(_local_30 < _local_68.giftConditionArr.length)
+						{
+							if(_local_68.giftConditionArr[_local_30].conditionIndex == 0)
+							{
+								_local_153 = _local_68.giftConditionArr[_local_30].conditionValue;
+							}
+							_local_30++;
+						}
+						for each(_local_90 in _local_86)
+						{
+							if(_local_90.statusID == _local_153)
+							{
+								_local_53 = _local_90.statusValue;
+								break;
+							}
+						}
+						if(_local_23 >= Date.parse(_local_69.beginShowTime) && _local_23 <= Date.parse(_local_69.endShowTime) && _local_53 > 0 && _local_111 == 0)
+						{
+							this.stateDic[_local_11.viewType] = true;
+							break;
+						}
+					}
+				}
+			}
+			this._currentItem && this._currentItem.setCanAwardStatus(WonderfulActivityManager.Instance.stateDic[this._currentItem.type]);
+			this.dispatchCheckEvent();
+		}
+		
+		public function useBattleCompanion(param1:InventoryItemInfo) : void
+		{
+			this._battleCompanionInfo = param1;
+			this._giveFriendOpenFrame = ComponentFactory.Instance.creatComponentByStylename("core.ddtshop.ShopPresentClearingFrame");
+			this._giveFriendOpenFrame.show();
+			this._giveFriendOpenFrame.presentBtn.addEventListener(MouseEvent.CLICK,this.__presentBtnClick,false,0,true);
+			this._giveFriendOpenFrame.addEventListener(FrameEvent.RESPONSE,this.__responseHandler2,false,0,true);
+		}
+		
+		private function __responseHandler2(param1:FrameEvent) : void
+		{
+			if(param1.responseCode == FrameEvent.CLOSE_CLICK || param1.responseCode == FrameEvent.ESC_CLICK || param1.responseCode == FrameEvent.CANCEL_CLICK)
+			{
+				this.removeBattleCompanion();
+				this._giveFriendOpenFrame = null;
+			}
+		}
+		
+		private function removeBattleCompanion() : void
+		{
+			if(Boolean(this._giveFriendOpenFrame) && Boolean(this._giveFriendOpenFrame.presentBtn))
+			{
+				this._giveFriendOpenFrame.presentBtn.removeEventListener(MouseEvent.CLICK,this.__presentBtnClick);
+			}
+			if(Boolean(this._giveFriendOpenFrame))
+			{
+				this._giveFriendOpenFrame.removeEventListener(FrameEvent.RESPONSE,this.__responseHandler2);
+			}
+			this._battleCompanionInfo = null;
+		}
+		
+		private function __presentBtnClick(param1:MouseEvent) : void
+		{
+			SoundManager.instance.play("008");
+			var _loc2_:String = this._giveFriendOpenFrame.nameInput.text;
+			if(_loc2_ == "")
+			{
+				MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("shop.ShopIIPresentView.give"));
+				return;
+			}
+			if(FilterWordManager.IsNullorEmpty(_loc2_))
+			{
+				MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("shop.ShopIIPresentView.space"));
+				return;
+			}
+			this.removeBattleCompanion();
+			ObjectUtils.disposeObject(this._giveFriendOpenFrame);
+			this._giveFriendOpenFrame = null;
+		}
+		
+		public function get eventsActiveDic() : Dictionary
+		{
+			return this._eventsActiveDic;
+		}
+		
+		public function getActiveEventsInfoByID(param1:int) : ActiveEventsInfo
+		{
+			return this._eventsActiveDic[param1];
+		}
+		
+		public function setLimitActivities(param1:Array) : void
+		{
+			var _loc2_:ActiveEventsInfo = null;
+			var _loc3_:String = null;
+			var _loc4_:int = 10000;
+			this._eventsActiveDic = new Dictionary();
+			var _loc5_:Date = TimeManager.Instance.Now();
+			for each(_loc2_ in param1)
+			{
+				if(_loc5_.time > _loc2_.start.time && _loc5_.time < _loc2_.end.time)
+				{
+					this._eventsActiveDic[_loc4_] = _loc2_;
+					_loc3_ = _loc4_.toString();
+					this.leftViewInfoDic[_loc3_] = new LeftViewInfoVo(_loc4_,"· " + _loc2_.Title,1);
+					if(_loc2_.HasKey != 1)
+					{
+						this.addElement(_loc3_);
+					}
+					else
+					{
+						this.addElement(_loc3_,true);
+					}
+					_loc4_++;
+				}
+			}
+		}
+		
+		private function getTodayList() : Array
+		{
+			var _loc1_:ActiveEventsInfo = null;
+			var _loc2_:Array = [];
+			var _loc3_:int = int(CalendarManager.getInstance().eventActives.length);
+			var _loc4_:Date = TimeManager.Instance.Now();
+			var _loc5_:int = 0;
+			while(_loc5_ < _loc3_)
+			{
+				_loc1_ = CalendarManager.getInstance().eventActives[_loc5_];
+				if(_loc4_.time > _loc1_.start.time && _loc4_.time < _loc1_.end.time)
+				{
+					_loc2_.push(_loc1_);
+				}
+				_loc5_++;
+			}
+			return _loc2_;
+		}
+		
+		public function getActivityDataById(param1:*) : GmActivityInfo
+		{
+			return this.activityData[param1];
+		}
+		
+		public function getActivityInitDataById(param1:*) : Object
+		{
+			return this.activityInitData[param1];
+		}
+		
+		public function get frame() : LimitActivityFrame
+		{
+			return this._frame;
+		}
+		
+		public function get sendFrame() : SendGiftActivityFrame
+		{
+			return this._sendGiftFrame;
+		}
+		
+		public function get actList() : Array
+		{
+			return this._actList;
+		}
+	}
+}
+

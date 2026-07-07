@@ -1,0 +1,9 @@
+package pyramid.model
+{
+	public class PyramidModel
+	{
+		public function PyramidModel()
+		{
+		}
+	}
+}

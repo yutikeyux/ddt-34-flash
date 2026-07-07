@@ -1,0 +1,9 @@
+package wonderfulActivity
+{
+	public class ActivityType
+	{
+		public function ActivityType()
+		{
+		}
+	}
+}

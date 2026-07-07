@@ -1,0 +1,9 @@
+package wonderfulActivity.data
+{
+	public class GiftConditionInfo
+	{
+		public function GiftConditionInfo()
+		{
+		}
+	}
+}

@@ -1,0 +1,9 @@
+package wonderfulActivity.limitactivity
+{
+	public class LimitActivityFrame
+	{
+		public function LimitActivityFrame()
+		{
+		}
+	}
+}

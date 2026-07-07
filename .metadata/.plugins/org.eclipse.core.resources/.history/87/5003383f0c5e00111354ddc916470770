@@ -1,0 +1,9 @@
+package pyramid
+{
+	public class PyramidPackageType
+	{
+		public function PyramidPackageType()
+		{
+		}
+	}
+}

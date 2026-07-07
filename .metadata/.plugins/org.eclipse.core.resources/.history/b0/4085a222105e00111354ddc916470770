@@ -1,0 +1,9 @@
+package wonderfulActivity.data
+{
+	public class SendGiftInfo
+	{
+		public function SendGiftInfo()
+		{
+		}
+	}
+}

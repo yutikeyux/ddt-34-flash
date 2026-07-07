@@ -1,0 +1,9 @@
+package Dice
+{
+	public class DiceManager
+	{
+		public function DiceManager()
+		{
+		}
+	}
+}

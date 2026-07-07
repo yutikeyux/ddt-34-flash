@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="ddt.debug.UIDebugHelper"/>
+    <classEntry path="ddtKingWay.DDTKingWayManager"/>
+    <classEntry path="room.view.roomView.MusicFrame"/>
+    <classEntry path="angelInvestment.AngelInvestmentManager"/>
+    <classEntry path="angelInvestment.AngelInvestmentView"/>
+    <classEntry path="Dice.DiceManager"/>
+    <classEntry path="Dice.Controller.DiceController"/>
+    <classEntry path="Dice.Event.DiceEvent"/>
+    <classEntry path="Dice.Model.DiceModel"/>
+    <classEntry path="Dice.VO.DiceCell"/>
+    <classEntry path="Dice.VO.DiceCellInfo"/>
+    <classEntry path="Dice.VO.DiceAwardInfo"/>
+    <classEntry path="Dice.VO.DiceAwardCell"/>
+    <classEntry path="pyramid.PyramidManager"/>
+    <classEntry path="pyramid.event.PyramidEvent"/>
+    <classEntry path="pyramid.model.PyramidModel"/>
+    <classEntry path="pyramid.data.PyramidSystemItemsInfo"/>
+    <classEntry path="pyramid.PyramidPackageType"/>
+    <classEntry path="signActivity.SignActivityMgr"/>
+    <classEntry path="wonderfulActivity.WonderfulActivityManager"/>
+    <classEntry path="signActivity.model.SignActivityModel"/>
+    <classEntry path="signActivity.view.SignActivityFrame"/>
+    <classEntry path="signActivity.view.SignActivityItem"/>
+    <classEntry path="wonderfulActivity.data.GiftBagInfo"/>
+    <classEntry path="wonderfulActivity.data.GiftConditionInfo"/>
+    <classEntry path="wonderfulActivity.data.GiftRewardInfo"/>
+    <classEntry path="wonderfulActivity.data.GmActivityInfo"/>
+    <classEntry path="wonderfulActivity.data.GiftCurInfo"/>
+    <classEntry path="wonderfulActivity.data.PlayerCurInfo"/>
+    <classEntry path="wonderfulActivity.data.SendGiftInfo"/>
+    <classEntry path="wonderfulActivity.data.GiftChildInfo"/>
+    <classEntry path="wonderfulActivity.data.ActivityTypeData"/>
+    <classEntry path="wonderfulActivity.data.CanGetData"/>
+    <classEntry path="wonderfulActivity.data.LeftViewInfoVo"/>
+    <classEntry path="wonderfulActivity.data.WonderfulActivityTypeData"/>
+    <classEntry path="wonderfulActivity.event.WonderfulActivityEvent"/>
+    <classEntry path="wonderfulActivity.items.JoinIsPowerView"/>
+    <classEntry path="wonderfulActivity.limitactivity.LimitActivityFrame"/>
+    <classEntry path="wonderfulActivity.data.ActivityCellVo"/>
+    <classEntry path="wonderfulActivity.ActivityType"/>
+    <classEntry path="wonderfulActivity.views.WonderfulRightView"/>
+    <classEntry path="wonderfulActivity.limitactivity.LimitActivityLeftView"/>
+    <classEntry path="wonderfulActivity.limitactivity.LimitActivityLeftUnit"/>
+    <classEntry path="wonderfulActivity.limitactivity.SendGiftActivityFrame"/>
+    <classEntry path="wonderfulActivity.newActivity.returnActivity.ReturnActivityView"/>
+    <classEntry path="wonderfulActivity.IShineableCell"/>
+    <classEntry path="wonderfulActivity.WonderfulActAnalyer"/>
+    <classEntry path="wonderfulActivity.WonderfulGMActAnalyer"/>
+    <classEntry path="wonderfulActivity.newActivity.returnActivity.ReturnListItem"/>
+    <classEntry path="wonderfulActivity.items.PrizeListItem"/>
+    <classEntry path="wonderfulActivity.items.AccumulativePayView"/>
+    <classEntry path="wonderfulActivity.items.AccumulativeItem"/>
+    <classEntry path="wonderfulActivity.items.FighterRutrunView"/>
+    <classEntry path="wonderfulActivity.items.HeroView"/>
+    <classEntry path="wonderfulActivity.items.LimitActivityView"/>
+    <classEntry path="wonderfulActivity.items.NewGameBenifitView"/>
+    <classEntry path="wonderfulActivity.items.NewGameBenifitTipSprite"/>
+    <classEntry path="wonderfulActivity.items.RechargeReturnView"/>
+    <classEntry path="wonderfulActivity.items.RightListItem"/>
+    <classEntry path="wonderfulActivity.items.StrengthDarenView"/>
+    <classEntry path="wonderfulActivity.items.StrengthDarenItem"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

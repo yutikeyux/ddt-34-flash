@@ -1,0 +1,9 @@
+package wonderfulActivity.newActivity.AnnouncementAct
+{
+	public class AnnouncementDetailView
+	{
+		public function AnnouncementDetailView()
+		{
+		}
+	}
+}

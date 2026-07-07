@@ -1,0 +1,9 @@
+package signActivity
+{
+	public class SignActivityMgr
+	{
+		public function SignActivityMgr()
+		{
+		}
+	}
+}

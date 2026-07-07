@@ -1,0 +1,9 @@
+package wonderfulActivity
+{
+	public class IShineableCell
+	{
+		public function IShineableCell()
+		{
+		}
+	}
+}

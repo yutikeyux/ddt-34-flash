@@ -1,0 +1,9 @@
+package Dice.VO
+{
+	public class DiceCell
+	{
+		public function DiceCell()
+		{
+		}
+	}
+}

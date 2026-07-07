@@ -1,0 +1,404 @@
+package signActivity.view
+{
+	import bagAndInfo.cell.BagCell;
+	import com.pickgliss.ui.ComponentFactory;
+	import com.pickgliss.ui.controls.BaseButton;
+	import com.pickgliss.utils.ObjectUtils;
+	import ddt.data.goods.InventoryItemInfo;
+	import ddt.data.goods.ItemTemplateInfo;
+	import ddt.manager.ItemManager;
+	import ddt.manager.SocketManager;
+	import ddt.utils.PositionUtils;
+	import flash.display.Bitmap;
+	import flash.display.Sprite;
+	import flash.events.MouseEvent;
+	import flash.utils.Dictionary;
+	import signActivity.SignActivityMgr;
+	import wonderfulActivity.data.GiftBagInfo;
+	import wonderfulActivity.data.GiftCurInfo;
+	import wonderfulActivity.data.GiftRewardInfo;
+	import wonderfulActivity.data.PlayerCurInfo;
+	import wonderfulActivity.data.SendGiftInfo;
+	
+	public class SignActivityItem extends Sprite
+	{
+		
+		public static var length:int = 1;
+		
+		public static var btnIndex:int = 1;
+		
+		public static var btnBigIndex:int = 1;
+		
+		public static var continuousGoodsIndex:int = 1;
+		
+		private var giftInfo:GiftBagInfo;
+		
+		private var _smallBtn:BaseButton;
+		
+		private var _goodEveryDayItemContainerAll:Sprite;
+		
+		private var _goodItemContainerAll:Sprite;
+		
+		private var _tag:Bitmap;
+		
+		private var _day:int;
+		
+		private var _money:int;
+		
+		private var _index:int;
+		
+		private var condition:int;
+		
+		private var tagIndex:int;
+		
+		private var leftIndex:int;
+		
+		private var dayArray:Array = [3,7,14];
+		
+		public function SignActivityItem(param1:int, param2:int)
+		{
+			super();
+			this._day = param1;
+		}
+		
+		private function removeEvent() : void
+		{
+			if(Boolean(this._smallBtn))
+			{
+				this._smallBtn.removeEventListener("click",this.getRewardBtnClick);
+			}
+			if(this._day == this.dayArray[2] && Boolean(this._goodEveryDayItemContainerAll))
+			{
+				this._goodEveryDayItemContainerAll.removeEventListener("rollOver",this.__onOver);
+				this._goodEveryDayItemContainerAll.removeEventListener("rollOut",this.__onOut);
+			}
+		}
+		
+		private function getRewardBtnClick(param1:MouseEvent) : void
+		{
+			var _loc2_:int = 0;
+			var _loc3_:SendGiftInfo = new SendGiftInfo();
+			_loc3_.activityId = SignActivityMgr.instance.model.actId;
+			var _loc4_:Array = [];
+			_loc2_ = 0;
+			while(_loc2_ < this.giftInfo.giftRewardArr.length)
+			{
+				_loc4_[_loc2_] = this.giftInfo.giftbagId;
+				_loc2_++;
+			}
+			_loc3_.giftIdArr = _loc4_;
+			var _loc5_:Vector.<SendGiftInfo> = new Vector.<SendGiftInfo>();
+			_loc5_.push(_loc3_);
+			SocketManager.Instance.out.sendWonderfulActivityGetReward(_loc5_);
+			this.setGetBtnEnalbe(false);
+		}
+		
+		public function setGetBtnEnalbe(param1:*) : void
+		{
+			if(Boolean(this._smallBtn))
+			{
+				ObjectUtils.disposeObject(this._smallBtn);
+				this._smallBtn = null;
+			}
+			if(this.giftInfo.giftConditionArr[0].conditionIndex == 1)
+			{
+				this._tag = ComponentFactory.Instance.creatBitmap("asset.signactivity.tag");
+				PositionUtils.setPos(this._tag,"asset.signactivity.tag.pos." + this._day + "." + (this.tagIndex + 1));
+				addChild(this._tag);
+			}
+			else
+			{
+				this.createBigBtn(this.leftIndex + 1,false);
+				addChild(this._smallBtn);
+				this._smallBtn.enable = param1;
+				this.leftIndex = Number(this.leftIndex) + 1;
+			}
+		}
+		
+		public function setGoods(param1:GiftBagInfo) : void
+		{
+			this.giftInfo = param1;
+			this.condition = this._money;
+			if(this.giftInfo.giftConditionArr[0].conditionIndex == 1)
+			{
+				this.everyDayGoods();
+			}
+			else
+			{
+				this.continuousGoods();
+			}
+		}
+		
+		private function everyDayGoods() : void
+		{
+			var _properties:Array = null;
+			var _bgCell:Bitmap = null;
+			var _TemplateInfo:ItemTemplateInfo = null;
+			var _ItemInfo:InventoryItemInfo = null;
+			var _BagCell:BagCell = null;
+			if(Boolean(this._goodEveryDayItemContainerAll))
+			{
+				ObjectUtils.disposeObject(this._goodEveryDayItemContainerAll);
+				this._goodEveryDayItemContainerAll = null;
+			}
+			this._goodEveryDayItemContainerAll = new Sprite();
+			var _rewards:GiftRewardInfo = null;
+			for each(_rewards in this.giftInfo.giftRewardArr)
+			{
+				_properties = _rewards.property.split(",");
+				_bgCell = ComponentFactory.Instance.creatBitmap("asset.signactivity.goodsBG");
+				_TemplateInfo = ItemManager.Instance.getTemplateById(_rewards.templateId) as ItemTemplateInfo;
+				_ItemInfo = new InventoryItemInfo();
+				ObjectUtils.copyProperties(_ItemInfo,_TemplateInfo);
+				_ItemInfo.StrengthenLevel = _properties[0];
+				_ItemInfo.AttackCompose = _properties[1];
+				_ItemInfo.DefendCompose = _properties[2];
+				_ItemInfo.AgilityCompose = _properties[3];
+				_ItemInfo.LuckCompose = _properties[4];
+				_ItemInfo.MagicAttack = _properties[6];
+				_ItemInfo.MagicDefence = _properties[7];
+				_ItemInfo.ValidDate = _rewards.validDate;
+				_ItemInfo.IsBinds = _rewards.isBind;
+				_ItemInfo.Count = _rewards.count;
+				_BagCell = new BagCell(0,_ItemInfo,false);
+				_BagCell.setBgVisible(false);
+				this._goodEveryDayItemContainerAll.addChild(_bgCell);
+				this._goodEveryDayItemContainerAll.addChild(_BagCell);
+			}
+			addChild(this._goodEveryDayItemContainerAll);
+			if(Boolean(this._day) && Boolean(length))
+			{
+				PositionUtils.setPos(this._goodEveryDayItemContainerAll,"everyDayGoods." + this._day + "." + length);
+			}
+			length = Number(length) + 1;
+			this.addEvent();
+		}
+		
+		private function addEvent() : void
+		{
+			if(this._day == this.dayArray[2])
+			{
+				this.addEventListener("mouseOver",this.__onOver);
+				this.addEventListener("mouseOut",this.__onOut);
+			}
+		}
+		
+		private function __onOver(param1:MouseEvent) : void
+		{
+			if(Boolean(this._smallBtn))
+			{
+				this._smallBtn.visible = true;
+			}
+		}
+		
+		private function __onOut(param1:MouseEvent) : void
+		{
+			if(Boolean(this._smallBtn))
+			{
+				this._smallBtn.visible = false;
+			}
+		}
+		
+		private function continuousGoods() : void
+		{
+			var _properties:Array = null;
+			var m_giftInfo:GiftRewardInfo = null;
+			var m_BagCell:BagCell = null;
+			_properties = null;
+			var _bgCell:Bitmap = null;
+			m_giftInfo = null;
+			_properties = null;
+			var _loc4_:int = 0;
+			_properties = null;
+			_bgCell = null;
+			var position:Number = NaN;
+			var _TemplateInfo:ItemTemplateInfo = null;
+			var _ItemInfo:InventoryItemInfo = null;
+			m_BagCell = null;
+			if(Boolean(this._goodItemContainerAll))
+			{
+				ObjectUtils.disposeObject(this._goodItemContainerAll);
+				this._goodItemContainerAll = null;
+			}
+			this._goodItemContainerAll = new Sprite();
+			this._goodItemContainerAll.x = 527;
+			this._goodItemContainerAll.y = 36;
+			var itemPlace:int = 0;
+			m_giftInfo = null;
+			for each(m_giftInfo in this.giftInfo.giftRewardArr)
+			{
+				_properties = m_giftInfo.property.split(",");
+				_bgCell = ComponentFactory.Instance.creatBitmap("asset.signactivity.goodsBG");
+				position = _bgCell.width + this.giftInfo.giftRewardArr.length - 5;
+				position *= int(itemPlace % this.giftInfo.giftRewardArr.length);
+				_bgCell.x = position;
+				_bgCell.y = 20;
+				_TemplateInfo = ItemManager.Instance.getTemplateById(m_giftInfo.templateId) as ItemTemplateInfo;
+				_ItemInfo = new InventoryItemInfo();
+				ObjectUtils.copyProperties(_ItemInfo,_TemplateInfo);
+				_ItemInfo.StrengthenLevel = _properties[0];
+				_ItemInfo.AttackCompose = _properties[1];
+				_ItemInfo.DefendCompose = _properties[2];
+				_ItemInfo.AgilityCompose = _properties[3];
+				_ItemInfo.LuckCompose = _properties[4];
+				_ItemInfo.MagicAttack = _properties[6];
+				_ItemInfo.MagicDefence = _properties[7];
+				_ItemInfo.ValidDate = m_giftInfo.validDate;
+				_ItemInfo.IsBinds = m_giftInfo.isBind;
+				_ItemInfo.Count = m_giftInfo.count;
+				m_BagCell = new BagCell(0,_ItemInfo,false);
+				if(this._day == this.dayArray[2])
+				{
+					m_BagCell.width = 42;
+					m_BagCell.height = 42;
+					_loc4_ = 45;
+					_bgCell.height = _loc4_;
+					_bgCell.width = _loc4_;
+					_bgCell.x = itemPlace * (_bgCell.width + 2);
+					m_BagCell.x = _bgCell.x + 5;
+				}
+				else
+				{
+					_bgCell.x = itemPlace * (_bgCell.width + 2);
+					m_BagCell.x = _bgCell.x + 5;
+				}
+				_bgCell.y = 20;
+				m_BagCell.y = 25;
+				m_BagCell.setBgVisible(false);
+				this._goodItemContainerAll.addChild(_bgCell);
+				this._goodItemContainerAll.addChild(m_BagCell);
+				itemPlace++;
+			}
+			addChild(this._goodItemContainerAll);
+			PositionUtils.setPos(this._goodItemContainerAll,"continuousGoods." + this._day + "." + continuousGoodsIndex);
+			continuousGoodsIndex = Number(continuousGoodsIndex) + 1;
+		}
+		
+		public function setStatus(playerInfos:Array, giftInfoDic:Dictionary, eventIndex:int) : void
+		{
+			var m_playerInfo:PlayerCurInfo = null;
+			this.clearBtn();
+			this.tagIndex = eventIndex;
+			var _CondictionValue:PlayerCurInfo = playerInfos[eventIndex] as PlayerCurInfo;
+			var _isReward:int = (giftInfoDic[this.giftInfo.giftbagId] as GiftCurInfo).times;
+			if(_isReward == 0)
+			{
+				if(this.giftInfo.giftConditionArr[0].conditionIndex == 1)
+				{
+					this._smallBtn = ComponentFactory.Instance.creat("signActivityItem.getBtn");
+					PositionUtils.setPos(this._smallBtn,"signActivityItem.getBtn." + this._day + "." + btnIndex);
+					this.leftIndex = btnIndex;
+					btnIndex = Number(btnIndex) + 1;
+					if(this._day == this.dayArray[2])
+					{
+						this._smallBtn.visible = false;
+					}
+				}
+				else if(this.giftInfo.giftConditionArr[0].conditionIndex == 2)
+				{
+					this.createBigBtn(btnBigIndex);
+					btnBigIndex = Number(btnBigIndex) + 1;
+				}
+				addChild(this._smallBtn);
+				this._smallBtn.enable = false;
+				if(this.giftInfo.giftConditionArr[0].conditionIndex == 1)
+				{
+					if(_CondictionValue.statusValue == 1)
+					{
+						this._smallBtn.enable = true;
+						this._smallBtn.addEventListener("click",this.getRewardBtnClick);
+					}
+					else if(_CondictionValue.statusValue == 2)
+					{
+						this.createTag(eventIndex);
+					}
+				}
+				else if(this.giftInfo.giftConditionArr[0].conditionIndex == 2)
+				{
+					if(playerInfos.length == 4)
+					{
+						m_playerInfo = playerInfos[2 + (btnBigIndex - 1)] as PlayerCurInfo;
+					}
+					if(playerInfos.length == 9)
+					{
+						m_playerInfo = playerInfos[6 + (btnBigIndex - 1)] as PlayerCurInfo;
+					}
+					if(playerInfos.length == 17)
+					{
+						m_playerInfo = playerInfos[13 + (btnBigIndex - 1)] as PlayerCurInfo;
+					}
+					m_playerInfo = playerInfos[13 + (btnBigIndex - 1)] as PlayerCurInfo;
+					if(m_playerInfo.statusValue == 1)
+					{
+						this._smallBtn.enable = true;
+						this._smallBtn.addEventListener("click",this.getRewardBtnClick);
+					}
+				}
+			}
+			else if(this.giftInfo.giftConditionArr[0].conditionIndex == 1)
+			{
+				this.createTag(eventIndex);
+				btnIndex = Number(btnIndex) + 1;
+			}
+			else
+			{
+				this.createBigBtn(btnBigIndex,false);
+				btnBigIndex = Number(btnBigIndex) + 1;
+				this._smallBtn.enable = false;
+				addChild(this._smallBtn);
+			}
+		}
+		
+		private function createBigBtn(param1:int, param2:Boolean = true) : void
+		{
+			if(param2)
+			{
+				if(this._day != this.dayArray[0])
+				{
+					this._smallBtn = ComponentFactory.Instance.creat("signActivityItem.getBtnBig2");
+				}
+				else
+				{
+					this._smallBtn = ComponentFactory.Instance.creat("signActivityItem.getBtnBig");
+				}
+			}
+			else if(this._day != this.dayArray[0])
+			{
+				this._smallBtn = ComponentFactory.Instance.creat("signActivityItem.getBtnBig3");
+			}
+			else
+			{
+				this._smallBtn = ComponentFactory.Instance.creat("signActivityItem.getBtnBig4");
+			}
+			PositionUtils.setPos(this._smallBtn,"signActivityItem.getBtnBig." + this._day + "." + param1);
+		}
+		
+		private function createTag(param1:int) : void
+		{
+			if(Boolean(this._smallBtn))
+			{
+				ObjectUtils.disposeObject(this._smallBtn);
+				this._smallBtn = null;
+			}
+			this._tag = ComponentFactory.Instance.creatBitmap("asset.signactivity.tag");
+			PositionUtils.setPos(this._tag,"asset.signactivity.tag.pos." + this._day + "." + (param1 + 1));
+			addChild(this._tag);
+		}
+		
+		private function clearBtn() : void
+		{
+			this.removeEvent();
+			ObjectUtils.disposeObject(this._smallBtn);
+			this._smallBtn = null;
+		}
+		
+		public function dispose() : void
+		{
+			this.removeEvent();
+			ObjectUtils.disposeAllChildren(this);
+			ObjectUtils.disposeObject(this._smallBtn);
+			this._smallBtn = null;
+		}
+	}
+}
+

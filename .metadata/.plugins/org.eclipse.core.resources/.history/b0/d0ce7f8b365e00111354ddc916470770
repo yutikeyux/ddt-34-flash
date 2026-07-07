@@ -1,0 +1,9 @@
+package pyramid.view
+{
+	public class PyramidReturnBar
+	{
+		public function PyramidReturnBar()
+		{
+		}
+	}
+}

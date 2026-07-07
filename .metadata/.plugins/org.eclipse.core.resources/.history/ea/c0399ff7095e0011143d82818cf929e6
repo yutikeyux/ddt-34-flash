@@ -1,0 +1,898 @@
+package hallIcon.view
+{
+	import accumulativeLogin.AccumulativeManager;
+	import com.pickgliss.ui.ComponentSetting;
+	import com.pickgliss.ui.controls.container.HBox;
+	import com.pickgliss.ui.core.Disposeable;
+	import com.pickgliss.utils.ObjectUtils;
+	import ddt.manager.BossBoxManager;
+	import ddt.manager.LanguageMgr;
+	import ddt.manager.MessageTipManager;
+	import ddt.manager.PlayerManager;
+	import ddt.manager.SharedManager;
+	import ddt.manager.SocketManager;
+	import ddt.manager.SoundManager;
+	import ddt.manager.StateManager;
+	import ddt.states.StateType;
+	import ddt.view.bossbox.SmallBoxButton;
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.events.MouseEvent;
+	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
+	import hallIcon.HallIconManager;
+	import hallIcon.HallIconType;
+	import hallIcon.event.HallIconEvent;
+	import hallIcon.info.HallIconInfo;
+	import littleGame.LittleGameManager;
+	import newChickenBox.controller.NewChickenBoxManager;
+	import noviceactivity.NoviceActivityManager;
+	import trainer.controller.WeakGuildManager;
+	import trainer.data.ArrowType;
+	import trainer.data.Step;
+	import trainer.view.NewHandContainer;
+	import worldboss.WorldBossManager;
+	//import chickActivation.ChickActivationManager;
+	//import luckStar.manager.LuckStarManager;
+	import guildMemberWeek.manager.GuildMemberWeekManager;
+	import GodSyah.SyahManager;
+	import consortionBattle.ConsortiaBattleManager;
+	import ddt.manager.GameInSocketOut;
+	import shop.manager.ShopSaleManager;
+	//import labyrinth.LabyrinthManager;
+	//import christmas.manager.ChristmasManager;
+	//import ddt.manager.PyramidManager;
+	
+	// --- YENİ EKLENEN OLASI IMPORTLAR (Projenize göre yolları kontrol edin) ---
+	// import boguadventure.BoguAdventureManager;
+	// import halloween.HalloweenManager;
+	// import witchBlessing.WitchBlessingManager;
+	// import treasurePuzzle.TreasurePuzzleManager;
+	// import worshipTheMoon.WorshipTheMoonManager;
+	// import foodActivity.FoodActivityManager;
+	// import rescue.RescueManager;
+	// import catchInsect.CatchInsectManager;
+	// import magpieBridge.MagpieBridgeManager;
+	// import cloudBuyLottery.CloudBuyLotteryManager;
+	// import treasureLost.TreasureLostManager;
+	// import dice.DiceManager;
+	// import treasureHunting.TreasureHuntingManager;
+	// import lanternRiddles.LanternRiddlesManager;
+	// import growthPackage.GrowthPackageManager;
+	// import groupPurchase.GroupPurchaseManager;
+	// import luckStone.LuckStoneManager;
+	// import mysteriousRoulette.MysteriousRouletteManager;
+	// import oldPlayerRegress.OldPlayerRegressManager;
+	// import lightRoad.LightRoadManager;
+	// import sevenDayTarget.SevenDayTargetManager;
+	// import godsRoads.GodsRoadsManager;
+	// import entertainment.EntertainmentManager;
+	// import kingDivision.KingDivisionManager;
+	// import superWinner.SuperWinnerManager;
+	// import ddplay.DDPlayManager;
+	// ---------------------------------------------------------------------
+	
+	public class HallRightIconView extends Sprite implements Disposeable
+	{
+		private var _iconBox:HBox;
+		private var _boxButton:SmallBoxButton;
+		private var _wonderFulPlay:HallIconPanel;
+		private var _activity:HallIconPanel;
+		private var _lastCreatTime:Number;
+		private var _showArrowSp:Sprite;
+		
+		public function HallRightIconView()
+		{
+			super();
+			this.initView();
+			this.initEvent();
+		}
+		
+		private function initView() : void
+		{
+			this._showArrowSp = new Sprite();
+			addChild(this._showArrowSp);
+			this._iconBox = new HBox();
+			this._iconBox.spacing = 5;
+			addChild(this._iconBox);
+			this.updateActivityIcon();
+			this.updateWonderfulPlayIcon();
+			this.checkShowBossBox();
+		}
+		
+		private function initEvent() : void
+		{
+			HallIconManager.instance.model.addEventListener(HallIconEvent.UPDATE_RIGHTICON_VIEW,this.__updateIconViewHandler);
+			HallIconManager.instance.model.addEventListener(HallIconEvent.UPDATE_BATCH_RIGHTICON_VIEW,this.__updateBatchIconViewHandler);
+			HallIconManager.instance.addEventListener(HallIconEvent.CHECK_HALLICONEXPERIENCEOPEN,this.__checkHallIconExperienceOpenHandler);
+		}
+		
+		private function addChildBox($child:DisplayObject) : void
+		{
+			this._iconBox.addChild($child);
+			this._iconBox.arrange();
+			this._iconBox.x = -this._iconBox.width;
+		}
+		
+		private function __updateBatchIconViewHandler(evt:HallIconEvent) : void
+		{
+			var info:HallIconInfo = null;
+			var dic:Dictionary = HallIconManager.instance.model.cacheRightIconDic;
+			for each(info in dic)
+			{
+				this.updateIconView(info);
+			}
+		}
+		
+		private function __updateIconViewHandler(evt:HallIconEvent) : void
+		{
+			var iconInfo:HallIconInfo = HallIconInfo(evt.data);
+			this.updateIconView(iconInfo);
+		}
+		
+		private function updateIconView($iconInfo:HallIconInfo) : void
+		{
+			if($iconInfo.halltype == HallIcon.WONDERFULPLAY && this._wonderFulPlay)
+			{
+				this.commonUpdateIconPanelView(this._wonderFulPlay,$iconInfo,false);
+			}
+			else if($iconInfo.halltype == HallIcon.ACTIVITY && this._activity)
+			{
+				this.commonUpdateIconPanelView(this._activity,$iconInfo,true);
+			}
+			else
+			{
+				switch($iconInfo.icontype)
+				{
+					case HallIconType.WONDERFULPLAY:
+						this.updateWonderfulPlayIcon();
+						break;
+					case HallIconType.ACTIVITY:
+						this.updateActivityIcon();
+						break;
+				}
+			}
+		}
+		
+		private function commonUpdateIconPanelView($hallIconPanel:HallIconPanel, $iconInfo:HallIconInfo, flag:Boolean = false) : void
+		{
+			var tempIcon:HallIcon = null;
+			if($iconInfo.isopen)
+			{
+				tempIcon = $hallIconPanel.getIconByType($iconInfo.icontype) as HallIcon;
+				if(!tempIcon)
+				{
+					tempIcon = $hallIconPanel.addIcon(this.createHallIconPanelIcon($iconInfo),$iconInfo.icontype,$iconInfo.orderid,flag) as HallIcon;
+				}
+				tempIcon.updateIcon($iconInfo);
+			}
+			else
+			{
+				$hallIconPanel.removeIconByType($iconInfo.icontype);
+			}
+			$hallIconPanel.arrange();
+		}
+		
+		private function updateWonderfulPlayIcon() : void
+		{
+			if(HallIconManager.instance.model.wonderFulPlayIsOpen)
+			{
+				if(this._wonderFulPlay == null)
+				{
+					this._wonderFulPlay = new HallIconPanel("assets.hallIcon.wonderfulPlayIcon",HallIconPanel.BOTTOM,6);
+					this._wonderFulPlay.addEventListener(MouseEvent.CLICK,this.__wonderFulPlayClickHandler);
+					this.addChildBox(this._wonderFulPlay);
+				}
+			}
+			else
+			{
+				this.removeWonderfulPlayIcon();
+			}
+		}
+		
+		private function checkShowBossBox() : void
+		{
+			if(BossBoxManager.instance.isShowBoxButton())
+			{
+				if(this._boxButton == null)
+				{
+					this._boxButton = new SmallBoxButton(SmallBoxButton.HALL_POINT);
+				}
+				this.addChildBox(this._boxButton);
+			}
+			else
+			{
+				this.removeBossBox();
+			}
+		}
+		
+		private function __wonderFulPlayClickHandler(evt:MouseEvent) : void
+		{
+			var icon:HallIcon = null;
+			if(this._wonderFulPlay && evt.target == this._wonderFulPlay.mainIcon)
+			{
+				this.topIndex();
+				this.checkNoneActivity(this._wonderFulPlay.count);
+				this.checkRightIconTaskClickHandler(HallIcon.WONDERFULPLAY);
+				return;
+			}
+			if(getTimer() - this._lastCreatTime < 1000)
+			{
+				return;
+			}
+			this._lastCreatTime = getTimer();
+			if(evt.target is HallIcon)
+			{
+				icon = evt.target as HallIcon;
+				if(icon.iconInfo.halltype == HallIcon.WONDERFULPLAY)
+				{
+					switch(icon.iconInfo.icontype)
+					{
+						case HallIconType.LEAGUE:
+							SoundManager.instance.playButtonSound();
+							if(!WeakGuildManager.Instance.checkOpen(Step.GAME_ROOM_OPEN,20))
+							{
+								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.functionLimitTip",20));
+								return;
+							}
+							StateManager.setState(StateType.ROOM_LIST);
+							ComponentSetting.SEND_USELOG_ID(3);
+							if(PlayerManager.Instance.Self.IsWeakGuildFinish(Step.GAME_ROOM_OPEN) && !PlayerManager.Instance.Self.IsWeakGuildFinish(Step.GAME_ROOM_CLICKED))
+							{
+								SocketManager.Instance.out.syncWeakStep(Step.GAME_ROOM_CLICKED);
+							}
+							break;
+						case HallIconType.LITTLEGAMENOTE:
+							SoundManager.instance.play("008");
+							if(LittleGameManager.Instance.hasActive())
+							{
+								StateManager.setState(StateType.LITTLEHALL);
+							}
+							else
+							{
+								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.labyrinth.LabyrinthBoxIconTips.labelII"));
+							}
+							break;
+						case HallIconType.WORLDBOSSENTRANCE1:
+						case HallIconType.WORLDBOSSENTRANCE2:
+						case HallIconType.WORLDBOSSENTRANCE4:
+						case HallIconType.WANTSTRONG:
+							SoundManager.instance.play("008");
+							if(WorldBossManager.Instance.isOpen)
+							{
+								StateManager.setState(StateType.WORLDBOSS_AWARD);
+							}
+							else
+							{
+								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.labyrinth.LabyrinthBoxIconTips.labelII"));
+							}
+							break;
+						case HallIconType.CONSORTIABATTLE:
+							SoundManager.instance.play("008");
+							if(ConsortiaBattleManager.instance.isCanEnter)
+							{
+								GameInSocketOut.sendSingleRoomBegin(4);
+							}
+							else if(PlayerManager.Instance.Self.ConsortiaID == 0)
+							{
+								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.consortiaBattle.cannotEnterTxt"));
+							}
+							else
+							{
+								MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("ddt.consortiaBattle.cannotEnterTxt2"));
+							}
+							break;
+						default:
+							SoundManager.instance.play("008");
+							break;
+					}
+				}
+			}
+		}
+		
+		private function updateActivityIcon() : void
+		{
+			if(HallIconManager.instance.model.activityIsOpen)
+			{
+				if(this._activity == null)
+				{
+					this._activity = new HallIconPanel("assets.hallIcon.activityIcon",HallIconPanel.BOTTOM,6);
+					this._activity.addEventListener(MouseEvent.CLICK,this.__activityClickHandler);
+					this.addChildBox(this._activity);
+				}
+			}
+			else
+			{
+				this.removeActivityIcon();
+			}
+		}
+		
+		private function __activityClickHandler(evt:MouseEvent) : void
+		{
+			var icon:HallIcon = null;
+			if(this._activity && evt.target == this._activity.mainIcon)
+			{
+				this.topIndex();
+				this.checkNoneActivity(this._activity.count);
+				this.checkRightIconTaskClickHandler(HallIcon.ACTIVITY);
+				return;
+			}
+			if(getTimer() - this._lastCreatTime < 1000)
+			{
+				return;
+			}
+			this._lastCreatTime = getTimer();
+			if(evt.target is HallIcon)
+			{
+				icon = evt.target as HallIcon;
+				if(icon.iconInfo.halltype == HallIcon.ACTIVITY)
+				{
+					switch(icon.iconInfo.icontype)
+					{
+						case HallIconType.ACCUMULATIVE_LOGIN:
+							AccumulativeManager.instance.showFrame();
+							break;
+						case HallIconType.LIMITACTIVITY:
+							NoviceActivityManager.instance.show();
+							break;
+						case HallIconType.NEWCHICKENBOX:
+							NewChickenBoxManager.instance.enterNewBoxView(evt);
+							break;
+						case HallIconType.GUILDMEMBERWEEK:
+							GuildMemberWeekManager.instance.onClickguildMemberWeekIcon(evt);
+							break;
+						case HallIconType.SYAH:
+							SoundManager.instance.play("008");
+							SyahManager.Instance.showFrame();
+							break;
+						case HallIconType.SALESHOP:
+							SoundManager.instance.play("008");
+							SocketManager.Instance.out.sendGetShopBuyLimitedCount();
+							ShopSaleManager.Instance.show();
+							break;
+						// Diğer aktiviteler için Manager metodları mevcut değilse ses çalar
+						default:
+							SoundManager.instance.play("008");
+							break;
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Bu fonksiyon verilen listenin tamamını kapsayacak şekilde düzenlenmiştir.
+		 * Asset yolları "assets.hallIcon." + İsim formatındadır.
+		 */
+		public function createHallIconPanelIcon($iconInfo:HallIconInfo) : HallIcon
+		{
+			var iconString:String = null;
+			
+			// Asset çatı path'i
+			var path:String = "assets.hallIcon.";
+			
+			switch($iconInfo.icontype)
+			{
+				// --- A ---
+				case HallIconType.ACTIVITY:
+					iconString = path + "activityIcon";
+					break;
+				case HallIconType.ACCUMULATIVE_LOGIN:
+					iconString = path + "accumulativeLoginIcon";
+					break;
+				case HallIconType.ANGELINVESTMENT:
+					iconString = path + "angelInvestmentIcon";
+					break;
+				case HallIconType.ASUNA:
+					iconString = path + "asuna31";
+					break;
+				
+				// --- B ---
+				case HallIconType.BALLGAME:
+					iconString = path + "ballGameIcon";
+					break;
+				case HallIconType.BANK:
+					iconString = path + "bankIcon";
+					break;
+				case HallIconType.BATTLE:
+					iconString = path + "battleIcon";
+					break;
+				case HallIconType.BOGUADVENTURE:
+					iconString = path + "boguAdventureIcon";
+					break;
+				case HallIconType.BURIED:
+					iconString = path + "buriedIcon";
+					break;
+				
+				// --- C ---
+				case HallIconType.CAMP:
+					iconString = path + "campIcon";
+					break;
+				case HallIconType.CATCHBEAST:
+					iconString = path + "catchBeastIcon"; // Listede catchBeastIcon
+					break;
+				case HallIconType.CATCHINSECT:
+					iconString = path + "catchInsect";
+					break;
+				case HallIconType.CHICKACTIVATION:
+					iconString = path + "chickActivationIcon";
+					break;
+				case HallIconType.CHRISTMAS:
+					iconString = path + "christmasIcon";
+					break;
+				case HallIconType.CITYBATTLE:
+					iconString = path + "cityBattle";
+					break;
+				case HallIconType.CLOUDBUYLOTTERY:
+					iconString = path + "cloudbuylotteryIcon";
+					break;
+				case HallIconType.CONDISCOUNT:
+					iconString = path + "condiscountIcon";
+					break;
+				case HallIconType.CONRECHARGE:
+					iconString = path + "conRechargeIcon";
+					break;
+				case HallIconType.CONSORTIABATTLE:
+					iconString = path + "consortiaBattleEntryIcon";
+					break;
+				
+				// --- D ---
+				case HallIconType.DDPLAY:
+					iconString = path + "DDPlayIcon";
+					break;
+				case HallIconType.DDPMATCH:
+					iconString = path + "DDTMatch";
+					break;
+				case HallIconType.DDQIYUAN:
+					iconString = path + "ddQiYuanIcon";
+					break;
+				case HallIconType.DDTKINGWAY:
+					iconString = path + "ddtKingWayIcon";
+					break;
+				case HallIconType.DEFENDDDTISLAND:
+					iconString = path + "defendDDTIslandIcon";
+					break;
+				case HallIconType.DICE:
+					iconString = path + "diceIcon";
+					break;
+				
+				// --- E ---
+				case HallIconType.ENTERTAINMENT:
+					iconString = path + "entertainmentIcon";
+					break;
+				case HallIconType.ESCORT:
+					iconString = path + "escortEntryIcon";
+					break;
+				case HallIconType.EVERYDAYACTIVITY:
+					iconString = path + "everyDayActivityIcon";
+					break;
+				case HallIconType.EXPBLESSED:
+					iconString = path + "expblessedIcon";
+					break;
+				case HallIconType.EXPERIENCECLICK:
+					iconString = path + "experienceClickTxt";
+					break;
+				
+				// --- F ---
+				case HallIconType.FACEBOOKGIFT:
+					iconString = path + "fackbookGiftIcon"; // Dosya adı fackbook olarak kalmış
+					break;
+				case HallIconType.FIGHTFOOTBALLTIME:
+					iconString = path + "fightFootballTimeIcon";
+					break;
+				case HallIconType.FIRSTRECHARGE:
+					iconString = path + "firstRechargeIcon";
+					break;
+				case HallIconType.FISHING:
+					iconString = path + "fishingIcon";
+					break;
+				case HallIconType.FLOWERGIVING:
+					iconString = path + "flowerGivingIcon";
+					break;
+				case HallIconType.FOODACTIVITY:
+					iconString = path + "newYearRiceIcon"; // newYearRiceIcon olarak asset var
+					break;
+				
+				// --- G ---
+				case HallIconType.GODCARD:
+					iconString = path + "godCard";
+					break;
+				case HallIconType.GODOFWEALTH:
+					iconString = path + "godOfWealthIcon";
+					break;
+				case HallIconType.GODSROADS:
+					iconString = path + "godsRoadsIcon";
+					break;
+				case HallIconType.GOLDMINE:
+					iconString = path + "goldmineIcon";
+					break;
+				case HallIconType.GROUPPURCHASE:
+					iconString = path + "groupPurchaseIcon";
+					break;
+				case HallIconType.GROWTHPACKAGE:
+					iconString = path + "growthPachageIcon"; // Dosya adı growthPachageIcon
+					break;
+				case HallIconType.GUILDMEMBERWEEK:
+					iconString = path + "guildmemberweekIcon";
+					break;
+				
+				// --- H ---
+				case HallIconType.HALLOWEEN:
+					iconString = path + "halloweenIcon";
+					break;
+				case HallIconType.HAPPYRECHARGE:
+					iconString = path + "happyRecharge";
+					break;
+				case HallIconType.HORSERACE:
+					iconString = path + "horseRace";
+					break;
+				case HallIconType.HOTNUMBG:
+					iconString = path + "hotNumBg";
+					break;
+				case HallIconType.HOTSPRING:
+					iconString = path + "hotSpring";
+					break;
+				
+				// --- I ---
+				case HallIconType.ICON_GLOW_1:
+					iconString = path + "iconGlow1";
+					break;
+				case HallIconType.ICON_GLOW_2:
+					iconString = path + "iconGlow2";
+					break;
+				case HallIconType.INDIANA:
+					iconString = path + "indianaIcon";
+					break;
+				
+				// --- K ---
+				case HallIconType.KINGBLESS:
+					iconString = path + "kingBlessIcon";
+					break;
+				case HallIconType.KINGDIVISION:
+					iconString = path + "kingDivisionIcon";
+					break;
+				case HallIconType.KINGICON:
+					iconString = path + "KingIcon";
+					break;
+				
+				// --- L ---
+				case HallIconType.LABYRINTH:
+					iconString = path + "labyrinthIcon"; // Listedede yoktu ama sabitte vardı, eklendi.
+					break;
+				case HallIconType.LANTERNRIDDLES:
+					iconString = path + "lanternriddlesIcon";
+					break;
+				case HallIconType.LEAGUE:
+					iconString = path + "leagueIcon";
+					break;
+				case HallIconType.LEFTGUNROULETTE:
+					iconString = path + "rouletteGunIcon"; // Liste karşılığı
+					break;
+				case HallIconType.LIGHTROAD:
+					iconString = path + "lightRoadIcon";
+					break;
+				case HallIconType.LIMITACTIVITY:
+					iconString = path + "limitActivityIcon";
+					break;
+				case HallIconType.LITTLEGAMENOTE:
+					iconString = path + "littleGameNoteIcon";
+					break;
+				case HallIconType.LOTTERYTICKET:
+					iconString = path + "lotteryTicketIcon";
+					break;
+				case HallIconType.LUCKSTAR:
+					iconString = path + "luckyStarIcon";
+					break;
+				case HallIconType.LUCKSTONE:
+					iconString = path + "luckStoneIcon";
+					break;
+				
+				// --- M ---
+				case HallIconType.MAGPIEBRIDGE:
+					iconString = path + "magpiebridge";
+					break;
+				case HallIconType.MEMORYGAME:
+					iconString = path + "MemoryGameIcon";
+					break;
+				case HallIconType.MONEYTREE:
+					iconString = path + "moneyTree";
+					break;
+				case HallIconType.MONEYTREEICON:
+					iconString = path + "moneyTreeIcon";
+					break;
+				case HallIconType.MYSTERIOUROULETTE:
+					iconString = path + "mysteriousRouletteIcon";
+					break;
+				
+				// --- N ---
+				case HallIconType.NEWCHICKENBOX:
+					iconString = path + "newChickenBoxIcon";
+					break;
+				case HallIconType.NEWYEARRICE:
+					iconString = path + "newYearRiceIcon";
+					break;
+				case HallIconType.NUMICONBG:
+					iconString = path + "numIconBg";
+					break;
+				
+				// --- O ---
+				case HallIconType.OLDPLAYERCOMEBACK:
+					iconString = path + "oldPlayerComeBack";
+					break;
+				case HallIconType.OLDPLAYERREGRESS:
+					iconString = path + "oldPlayerRegressIcon";
+					break;
+				
+				// --- P ---
+				case HallIconType.PANICBUYING:
+					iconString = path + "panicBuyingIcon";
+					break;
+				case HallIconType.PETISLAND:
+					iconString = path + "petIsland";
+					break;
+				case HallIconType.PRAYINDIANA:
+					iconString = path + "prayIndianaIcon";
+					break;
+				case HallIconType.PYRAMID:
+					iconString = path + "pyramidIcon";
+					break;
+				
+				// --- R ---
+				case HallIconType.RANK:
+					iconString = path + "rankIcon";
+					break;
+				case HallIconType.RAPHTALIA:
+					iconString = path + "raphtalia31";
+					break;
+				case HallIconType.REDENVELOPE:
+					iconString = path + "redEnvelope";
+					break;
+				case HallIconType.RENSHEN:
+					iconString = path + "renshenIcon";
+					break;
+				case HallIconType.RESCUE:
+					iconString = path + "rescue";
+					break;
+				case HallIconType.RINGSTATION:
+					iconString = path + "ringStationIcon";
+					break;
+				case HallIconType.ROULETTEGUN:
+					iconString = path + "rouletteGunIcon";
+					break;
+				case HallIconType.RULANSENISGOOD31:
+					iconString = path + "rulansenisgood31";
+					break;
+				case HallIconType.RULANSENISGOOD62:
+					iconString = path + "rulansenisgood62";
+					break;
+				
+				// --- S ---
+				case HallIconType.SALESHOP:
+					iconString = path + "saleShopIcon";
+					break;
+				case HallIconType.SEVENDAY:
+					iconString = path + "sevendayIcon";
+					break;
+				case HallIconType.SEVENDAYTARGET:
+					iconString = path + "sevenDayTargetIcon";
+					break;
+				case HallIconType.SEVENDOUBLE:
+					iconString = path + "sevenDoubleEntryIcon";
+					break;
+				case HallIconType.SIGNACTIVITY:
+					iconString = path + "signActivity";
+					break;
+				case HallIconType.SUPERWINNER:
+					iconString = path + "superWinnerEntryIcon";
+					break;
+				case HallIconType.SURVIVAL:
+					iconString = path + "survivalIcon";
+					break;
+				case HallIconType.SYAH:
+					iconString = path + "syahIcon";
+					break;
+				
+				// --- T ---
+				case HallIconType.TRANSNATIONAL:
+					iconString = path + "transnationalIcon";
+					break;
+				case HallIconType.TREASUREHUNTING:
+					iconString = path + "treasureHuntingIcon";
+					break;
+				case HallIconType.TREASURELOST:
+					iconString = path + "treasureLostIcon";
+					break;
+				case HallIconType.TREASUREPUZZLE:
+					iconString = path + "treasurePuzzleIcon";
+					break;
+				
+				// --- V ---
+				case HallIconType.VIPLVL:
+					iconString = path + "VIPLvlIcon";
+					break;
+				
+				// --- W ---
+				case HallIconType.WANTSTRONG:
+					iconString = path + "wantstrongIcon";
+					break;
+				case HallIconType.WITCHBLESSING:
+					iconString = path + "witchBlessingIcon";
+					break;
+				case HallIconType.WONDERFULPLAY:
+					iconString = path + "wonderfulPlayIcon";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE1:
+					iconString = path + "worldBossEntrance_1";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE2:
+					iconString = path + "worldBossEntrance_2";
+					break;
+				case HallIconType.WORLDBOSSENTRANCE4:
+					iconString = path + "worldBossEntrance_4";
+					break;
+				case HallIconType.WORSHIPTHEMOON:
+					iconString = path + "worshipTheMoon";
+					break;
+				
+				// --- Z ---
+				case HallIconType.ZODIAC:
+					iconString = path + "zodiacIcon";
+					break;
+			}
+			
+			return new HallIcon(iconString,$iconInfo);
+		}
+		
+		public function getIconByType($hallType:int, $iconType:String) : DisplayObject
+		{
+			if($hallType == HallIcon.WONDERFULPLAY && this._wonderFulPlay)
+			{
+				return this._wonderFulPlay.getIconByType($iconType);
+			}
+			if($hallType == HallIcon.ACTIVITY && this._activity)
+			{
+				return this._activity.getIconByType($iconType);
+			}
+			return null;
+		}
+		
+		private function topIndex() : void
+		{
+			if(this.parent && this.parent.numChildren > 1)
+			{
+				this.parent.setChildIndex(this,this.parent.numChildren - 1);
+			}
+		}
+		
+		private function checkNoneActivity($count:int) : void
+		{
+			if($count <= 0)
+			{
+				MessageTipManager.getInstance().show(LanguageMgr.GetTranslation("tank.calendar.NoneActivity"));
+			}
+		}
+		
+		public function __checkHallIconExperienceOpenHandler(evt:HallIconEvent) : void
+		{
+			this.updateRightIconTaskArrow();
+		}
+		
+		private function updateRightIconTaskArrow() : void
+		{
+			var step:int = 0;
+			var posId:int = 0;
+			var cacheRightIconTask:Object = HallIconManager.instance.model.cacheRightIconTask;
+			if(cacheRightIconTask && !cacheRightIconTask.isCompleted && SharedManager.Instance.halliconExperienceStep < 2)
+			{
+				step = SharedManager.Instance.halliconExperienceStep;
+				posId = 1;
+				if(this._iconBox.numChildren == 3)
+				{
+					posId = 2;
+				}
+				else if(this._iconBox.numChildren == 4)
+				{
+					posId = 3;
+				}
+				else if(this._iconBox.numChildren == 5)
+				{
+					posId = 4;
+				}
+				if(step == 1)
+				{
+					posId += 1;
+				}
+				NewHandContainer.Instance.showArrow(ArrowType.HALLICON_EXPERIENCE,-90,"hallIcon.hallIconExperiencePos" + posId,"assets.hallIcon.experienceClickTxt","hallIcon.hallIconExperienceTxt" + posId,this._showArrowSp,0,true);
+			}
+			else if(NewHandContainer.Instance.hasArrow(ArrowType.HALLICON_EXPERIENCE))
+			{
+				NewHandContainer.Instance.clearArrowByID(ArrowType.HALLICON_EXPERIENCE);
+			}
+		}
+		
+		private function checkRightIconTaskClickHandler($halltype:int) : void
+		{
+			if(!HallIconManager.instance.model.cacheRightIconTask)
+			{
+				return;
+			}
+			if($halltype == HallIcon.WONDERFULPLAY && SharedManager.Instance.halliconExperienceStep == 0)
+			{
+				SharedManager.Instance.halliconExperienceStep = 1;
+				this.updateRightIconTaskArrow();
+				SharedManager.Instance.save();
+			}
+			else if($halltype == HallIcon.ACTIVITY && SharedManager.Instance.halliconExperienceStep == 1)
+			{
+				SharedManager.Instance.halliconExperienceStep = 2;
+				this.updateRightIconTaskArrow();
+				SharedManager.Instance.halliconExperienceStep = 0;
+				SharedManager.Instance.save();
+			}
+		}
+		
+		private function removeEvent() : void
+		{
+			HallIconManager.instance.model.removeEventListener(HallIconEvent.UPDATE_RIGHTICON_VIEW,this.__updateIconViewHandler);
+			HallIconManager.instance.model.removeEventListener(HallIconEvent.UPDATE_BATCH_RIGHTICON_VIEW,this.__updateBatchIconViewHandler);
+			HallIconManager.instance.removeEventListener(HallIconEvent.CHECK_HALLICONEXPERIENCEOPEN,this.__checkHallIconExperienceOpenHandler);
+		}
+		
+		private function removeWonderfulPlayIcon() : void
+		{
+			if(this._wonderFulPlay)
+			{
+				this._wonderFulPlay.removeEventListener(MouseEvent.CLICK,this.__wonderFulPlayClickHandler);
+				ObjectUtils.disposeObject(this._wonderFulPlay);
+				this._wonderFulPlay = null;
+			}
+		}
+		
+		private function removeActivityIcon() : void
+		{
+			if(this._activity)
+			{
+				this._activity.removeEventListener(MouseEvent.CLICK,this.__activityClickHandler);
+				ObjectUtils.disposeObject(this._activity);
+				this._activity = null;
+			}
+		}
+		
+		private function removeBossBox() : void
+		{
+			if(this._boxButton)
+			{
+				ObjectUtils.disposeAllChildren(this._boxButton);
+				ObjectUtils.disposeObject(this._boxButton);
+				this._boxButton = null;
+			}
+		}
+		
+		public function dispose() : void
+		{
+			this.removeEvent();
+			this.removeWonderfulPlayIcon();
+			this.removeActivityIcon();
+			this.removeBossBox();
+			if(NewHandContainer.Instance.hasArrow(ArrowType.HALLICON_EXPERIENCE))
+			{
+				NewHandContainer.Instance.clearArrowByID(ArrowType.HALLICON_EXPERIENCE);
+			}
+			if(this._showArrowSp)
+			{
+				ObjectUtils.disposeAllChildren(this._showArrowSp);
+				ObjectUtils.disposeObject(this._showArrowSp);
+				this._showArrowSp = null;
+			}
+			if(this._iconBox)
+			{
+				ObjectUtils.disposeAllChildren(this._iconBox);
+				ObjectUtils.disposeObject(this._iconBox);
+				this._iconBox = null;
+			}
+			if(parent)
+			{
+				parent.removeChild(this);
+			}
+		}
+	}
+}

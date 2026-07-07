@@ -1,0 +1,9 @@
+package wonderfulActivity.newActivity.GetRewardAct
+{
+	public class GetAwardActView
+	{
+		public function GetAwardActView()
+		{
+		}
+	}
+}

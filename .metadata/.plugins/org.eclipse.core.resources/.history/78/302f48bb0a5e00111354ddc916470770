@@ -1,0 +1,9 @@
+package Dice.Controller
+{
+	public class DiceController
+	{
+		public function DiceController()
+		{
+		}
+	}
+}

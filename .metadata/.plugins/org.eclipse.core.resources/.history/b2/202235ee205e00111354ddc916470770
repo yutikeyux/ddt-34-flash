@@ -1,0 +1,9 @@
+package wonderfulActivity.items
+{
+	public class FighterRutrunView
+	{
+		public function FighterRutrunView()
+		{
+		}
+	}
+}

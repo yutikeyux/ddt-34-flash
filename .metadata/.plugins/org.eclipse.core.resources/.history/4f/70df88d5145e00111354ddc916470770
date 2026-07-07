@@ -1,0 +1,9 @@
+package wonderfulActivity.newActivity.returnActivity
+{
+	public class ReturnActivityView
+	{
+		public function ReturnActivityView()
+		{
+		}
+	}
+}

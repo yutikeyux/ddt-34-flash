@@ -1,0 +1,9 @@
+package wonderfulActivity
+{
+	public class WonderfulActAnalyer
+	{
+		public function WonderfulActAnalyer()
+		{
+		}
+	}
+}

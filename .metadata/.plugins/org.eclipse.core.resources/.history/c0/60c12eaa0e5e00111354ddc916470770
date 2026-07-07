@@ -1,0 +1,9 @@
+package signActivity.view
+{
+	public class SignActivityFrame
+	{
+		public function SignActivityFrame()
+		{
+		}
+	}
+}

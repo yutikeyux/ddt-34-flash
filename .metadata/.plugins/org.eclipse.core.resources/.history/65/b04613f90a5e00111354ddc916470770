@@ -1,0 +1,9 @@
+package Dice.VO
+{
+	public class DiceCellInfo
+	{
+		public function DiceCellInfo()
+		{
+		}
+	}
+}

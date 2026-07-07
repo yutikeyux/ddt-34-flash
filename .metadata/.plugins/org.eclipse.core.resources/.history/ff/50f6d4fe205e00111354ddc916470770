@@ -1,0 +1,9 @@
+package wonderfulActivity.items
+{
+	public class HeroView
+	{
+		public function HeroView()
+		{
+		}
+	}
+}

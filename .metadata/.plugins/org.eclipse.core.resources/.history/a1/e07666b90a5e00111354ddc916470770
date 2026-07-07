@@ -1,0 +1,9 @@
+package Dice.Event
+{
+	public class DiceEvent
+	{
+		public function DiceEvent()
+		{
+		}
+	}
+}

@@ -1,0 +1,9 @@
+package wonderfulActivity.data
+{
+	public class PlayerCurInfo
+	{
+		public function PlayerCurInfo()
+		{
+		}
+	}
+}

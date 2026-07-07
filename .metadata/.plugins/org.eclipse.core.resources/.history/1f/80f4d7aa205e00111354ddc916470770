@@ -1,0 +1,9 @@
+package wonderfulActivity.items
+{
+	public class PrizeListItem
+	{
+		public function PrizeListItem()
+		{
+		}
+	}
+}

@@ -1,0 +1,9 @@
+package pyramid.event
+{
+	public class PyramidEvent
+	{
+		public function PyramidEvent()
+		{
+		}
+	}
+}

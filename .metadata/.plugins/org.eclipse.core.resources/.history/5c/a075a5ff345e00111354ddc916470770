@@ -1,0 +1,9 @@
+package wonderfulActivity.event
+{
+	public class ActivityEvent
+	{
+		public function ActivityEvent()
+		{
+		}
+	}
+}

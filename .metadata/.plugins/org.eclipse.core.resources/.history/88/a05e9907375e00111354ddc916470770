@@ -1,0 +1,9 @@
+package ddt.data
+{
+	public class PyramidSystemItemsInfo
+	{
+		public function PyramidSystemItemsInfo()
+		{
+		}
+	}
+}

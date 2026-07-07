@@ -1,0 +1,9 @@
+package angelInvestment
+{
+	public class AngelInvestmentManager
+	{
+		public function AngelInvestmentManager()
+		{
+		}
+	}
+}

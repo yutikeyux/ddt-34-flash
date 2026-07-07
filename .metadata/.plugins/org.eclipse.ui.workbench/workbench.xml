@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="31" version="2.0">
+<workbench progressCount="36" version="2.0">
 <workbenchAdvisor/>
-<window height="768" width="1024" x="372" y="123">
-<fastViewData fastViewLocation="1024"/>
+<window height="768" maximized="true" minimized="true" width="1024" x="224" y="153">
+<fastViewData fastViewLocation="1024">
+<orientation position="512" view="org.eclipse.ui.views.ProblemView"/>
+</fastViewData>
 <perspectiveBar>
 <itemSize x="160"/>
 </perspectiveBar>
 <coolbarLayout>
 <coolItem id="group.file" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="168" y="22"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="379" y="22"/>
 <coolItem id="additions" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="214" y="22"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="103" y="22"/>
@@ -18,6 +20,8 @@
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="206" y="22"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.DefaultTextEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" itemType="typePlaceholder" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -32,8 +36,44 @@
 </editorArea>
 </editors>
 <views>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Warnings"/>
+</expanded>
+<columnWidths org.eclipse.ui.ide.locationField="120" org.eclipse.ui.ide.markerType="120" org.eclipse.ui.ide.pathField="160" org.eclipse.ui.ide.resourceField="120" org.eclipse.ui.ide.severityAndDescriptionField="400"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
 <view id="com.adobe.flexbuilder.packageexplorer" partName="Package Explorer">
 <viewState LINK_NAVIGATOR_TO_EDITOR="0" fpeIsFlat="0" fpeSortBy="1" sorter="1">
+<fpeExpanded>
+<fpeElement fpePath="/EldoriaFlash"/>
+<fpeElement fpePath="/EldoriaFlash/src"/>
+<fpeElement fpePath="/EldoriaFlash/src/bagAndInfo"/>
+<fpeElement fpePath="/EldoriaFlash/src/bagAndInfo/bag"/>
+<fpeElement fpePath="/EldoriaFlash/src/bagAndInfo/cell"/>
+<fpeElement fpePath="/EldoriaFlash/src/pyramid"/>
+<fpeElement fpePath="/EldoriaFlash/src/pyramid/data"/>
+<fpeElement fpePath="/EldoriaFlash/src/pyramid/view"/>
+<fpeElement fpePath="/EldoriaFlash/src/room"/>
+<fpeElement fpePath="/EldoriaFlash/src/room/view"/>
+<fpeElement fpePath="/EldoriaFlash/src/room/view/chooseMap"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/event"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/newActivity"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/newActivity/AnnouncementAct"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/newActivity/ExchangeAct"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/newActivity/GetRewardAct"/>
+<fpeElement fpePath="/EldoriaFlash/src/wonderfulActivity/views"/>
+</fpeExpanded>
+<fpeSelection>
+<fpeElement fpePath="/EldoriaFlash/src/bagAndInfo/bag/BagView.as"/>
+</fpeSelection>
 <filters>
 <filter element=".flexProperties" isEnabled="true"/>
 <filter element=".actionScriptProperties" isEnabled="true"/>
@@ -54,13 +94,16 @@
 <filter element="*.class" isEnabled="false"/>
 <filter element=".*" isEnabled="false"/>
 </filters>
+<expanded>
+<element path="/EldoriaFlash"/>
+</expanded>
+<selection>
+<element path="/EldoriaFlash/src/bagAndInfo/bag/BagView.as"/>
+</selection>
 </viewState>
 </view>
-<view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
-<viewState/>
-</view>
 </views>
-<perspectives activePerspective="com.adobe.flexbuilder.editors.mxml.ui.perspectives.development">
+<perspectives activePart="com.adobe.flexbuilder.packageexplorer" activePerspective="com.adobe.flexbuilder.editors.mxml.ui.perspectives.development">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="com.adobe.flexbuilder.mxml.editor.ui.perspectives.DevelopmentPerspectiveFactory" id="com.adobe.flexbuilder.editors.mxml.ui.perspectives.development" label="Flash"/>
 <alwaysOnActionSet id="com.adobe.flexbuilder.flashbridge.flashproject.actionSet"/>
@@ -123,7 +166,7 @@
 <hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
 <hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
 <view id="com.adobe.flexbuilder.packageexplorer"/>
-<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
 <fastViewBars/>
 <layout>
 <mainWindow>
@@ -142,7 +185,7 @@
 <page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.2" ratioLeft="200" ratioRight="800" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1681629"/>
+<info part="org.eclipse.ui.editorss" ratio="0.25114754" ratioLeft="383" ratioRight="1142" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1681629"/>
 <info folder="true" part="statesViewHolder" ratio="0.65" ratioLeft="520" ratioRight="280" relationship="2" relative="org.eclipse.ui.editorss">
 <folder appearance="2" expanded="2">
 <page content="com.adobe.flexbuilder.mxml.editor.states.StatesViewer" label="LabelNotFound"/>
@@ -155,24 +198,36 @@
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="bottomLayout" ratio="0.74922603" ratioLeft="484" ratioRight="162" relationship="4" relative="org.eclipse.ui.editorss">
+<info folder="true" part="bottomLayout" ratio="0.78428763" ratioLeft="589" ratioRight="162" relationship="4" relative="org.eclipse.ui.editorss">
 <folder appearance="2" expanded="2">
-<page content="org.eclipse.ui.views.ProblemView" label="LabelNotFound"/>
+<page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
+<page content="com.adobe.flexbuilder.as.editor.asdocviewer" label="LabelNotFound"/>
 <page content="com.adobe.flexbuilder.dcrad.views.DataServicesView" label="LabelNotFound"/>
+<page content="com.adobe.flexbuilder.monitors.network.view.NetworkMonitorView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="LabelNotFound"/>
 <page content="com.adobe.flexbuilder.mxml.editor.design.internal.errors.view.DesignModeProblemsView" label="LabelNotFound"/>
-<page content="com.adobe.flexbuilder.monitors.network.view.NetworkMonitorView" label="LabelNotFound"/>
-<page content="com.adobe.flexbuilder.as.editor.asdocviewer" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="outlineHolder" ratio="0.5" ratioLeft="323" ratioRight="323" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1681629">
-<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">
-<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
-<page content="com.adobe.flexbuilder.mxml.editor.components.ComponentsView" label="LabelNotFound"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@6109ef85" ratio="0.4995633" ratioLeft="572" ratioRight="573" relationship="2" relative="org.eclipse.ui.editorss">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ProgressView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@373b56b4" ratio="0.7491749" ratioLeft="681" ratioRight="228" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.views.ProblemView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
 </presentation>
+</folder>
+</info>
+<info folder="true" part="outlineHolder" ratio="0.5" ratioLeft="323" ratioRight="323" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1681629">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
+<page content="com.adobe.flexbuilder.mxml.editor.components.ComponentsView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
 </mainWindow>
@@ -186,6 +241,9 @@
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
+<trimArea IMemento.internal.id="16384">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.ViewStack@1681629"/>
+</trimArea>
 <trimArea IMemento.internal.id="128">
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 <trimItem IMemento.internal.id="org.eclipse.mylyn.tasks.ui.trim.container"/>
@@ -198,8 +256,50 @@
 </trimLayout>
 </window>
 <mruList>
-<file factoryID="com.adobe.flexbuilder.editors.derived.ui.startpage.StartPageEditorInput" id="com.adobe.flexbuilder.ui.StartPage" name="Web Browser" tooltip="Flash Builder Welcome Screen">
-<persistable iconpath="platform:/plugin/com.adobe.flexbuilder.ui/icons/fb_app_16.png" style="20" tooltip="Flash Builder Welcome Screen" url="file:/C:/Program Files/Adobe/Adobe Flash Builder 4.7 (64 Bit)/eclipse/plugins/com.adobe.flexbuilder.ui_4.7.0.349722/welcome/index.html?firstLaunch=false&amp;edition=stnd&amp;version=470"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="BagView.as" tooltip="EldoriaFlash/src/bagAndInfo/bag/BagView.as">
+<persistable path="/EldoriaFlash/src/bagAndInfo/bag/BagView.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="LabyrinthManager.as" tooltip="EldoriaFlash/src/labyrinth/LabyrinthManager.as">
+<persistable path="/EldoriaFlash/src/labyrinth/LabyrinthManager.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="MusicFrame.as" tooltip="EldoriaFlash/src/room/view/roomView/MusicFrame.as">
+<persistable path="/EldoriaFlash/src/room/view/roomView/MusicFrame.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="SmallMapTitleBar.as" tooltip="EldoriaFlash/src/game/view/smallMap/SmallMapTitleBar.as">
+<persistable path="/EldoriaFlash/src/game/view/smallMap/SmallMapTitleBar.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="BaseLoader.as" tooltip="EldoriaFlash/src/com/pickgliss/loader/BaseLoader.as">
+<persistable path="/EldoriaFlash/src/com/pickgliss/loader/BaseLoader.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="DungeonChooseMapView.as" tooltip="EldoriaFlash/src/room/view/chooseMap/DungeonChooseMapView.as">
+<persistable path="/EldoriaFlash/src/room/view/chooseMap/DungeonChooseMapView.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidCard.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidCard.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidCard.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidSystemItemsInfo.as" tooltip="EldoriaFlash/src/pyramid/data/PyramidSystemItemsInfo.as">
+<persistable path="/EldoriaFlash/src/pyramid/data/PyramidSystemItemsInfo.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidModel.as" tooltip="EldoriaFlash/src/ddt/data/PyramidModel.as">
+<persistable path="/EldoriaFlash/src/ddt/data/PyramidModel.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidSystemItemsInfo.as" tooltip="EldoriaFlash/src/ddt/data/PyramidSystemItemsInfo.as">
+<persistable path="/EldoriaFlash/src/ddt/data/PyramidSystemItemsInfo.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidReturnBar.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidReturnBar.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidReturnBar.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidView.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidView.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidView.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidTopBox.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidTopBox.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidTopBox.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidShopItem.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidShopItem.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidShopItem.as"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.adobe.flexbuilder.editors.actionscript.ActionScriptEditor" name="PyramidLeftView.as" tooltip="EldoriaFlash/src/pyramid/view/PyramidLeftView.as">
+<persistable path="/EldoriaFlash/src/pyramid/view/PyramidLeftView.as"/>
 </file>
 </mruList>
 </workbench>

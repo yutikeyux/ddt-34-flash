@@ -1,0 +1,9 @@
+package pyramid
+{
+	public class PyramidManager
+	{
+		public function PyramidManager()
+		{
+		}
+	}
+}

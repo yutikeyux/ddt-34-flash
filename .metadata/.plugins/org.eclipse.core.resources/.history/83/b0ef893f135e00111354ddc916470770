@@ -1,0 +1,9 @@
+package wonderfulActivity.views
+{
+	public class WonderfulRightView
+	{
+		public function WonderfulRightView()
+		{
+		}
+	}
+}

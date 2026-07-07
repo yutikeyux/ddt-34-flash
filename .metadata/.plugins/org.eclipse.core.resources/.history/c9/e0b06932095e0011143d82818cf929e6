@@ -1,0 +1,9 @@
+package angelInvestment
+{
+	public class AngelInvestmentView
+	{
+		public function AngelInvestmentView()
+		{
+		}
+	}
+}

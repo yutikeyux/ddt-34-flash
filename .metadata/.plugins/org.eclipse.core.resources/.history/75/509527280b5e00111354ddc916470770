@@ -1,0 +1,9 @@
+package Dice.VO
+{
+	public class DiceAwardCell
+	{
+		public function DiceAwardCell()
+		{
+		}
+	}
+}

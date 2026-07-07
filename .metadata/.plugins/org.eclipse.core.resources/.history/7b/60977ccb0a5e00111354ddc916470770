@@ -1,0 +1,9 @@
+package Dice.Model
+{
+	public class DiceModel
+	{
+		public function DiceModel()
+		{
+		}
+	}
+}

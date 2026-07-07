@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="ddt.debug.UIDebugHelper"/>
+    <classEntry path="ddtKingWay.DDTKingWayManager"/>
+    <classEntry path="room.view.roomView.MusicFrame"/>
+    <classEntry path="angelInvestment.AngelInvestmentManager"/>
+    <classEntry path="angelInvestment.AngelInvestmentView"/>
+    <classEntry path="Dice.DiceManager"/>
+    <classEntry path="Dice.Controller.DiceController"/>
+    <classEntry path="Dice.Event.DiceEvent"/>
+    <classEntry path="Dice.Model.DiceModel"/>
+    <classEntry path="Dice.VO.DiceCell"/>
+    <classEntry path="Dice.VO.DiceCellInfo"/>
+    <classEntry path="Dice.VO.DiceAwardInfo"/>
+    <classEntry path="Dice.VO.DiceAwardCell"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>
